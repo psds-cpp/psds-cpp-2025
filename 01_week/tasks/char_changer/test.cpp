@@ -70,7 +70,7 @@ TEST(CharChangerTest, SimpleExample) {
         CheckAnswer(array, size, ',', expected, expected_size);
     }
     {
-        char array[] = "ABCDEF";
+        char array[] = "abcdef";
         const size_t size = std::size(array);
         char expected[size] = "ABCDEF";
         size_t expected_size = 6;
