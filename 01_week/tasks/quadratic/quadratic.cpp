@@ -1,6 +1,7 @@
 #include <stdexcept>
 #include <cmath>
 #include <iomanip>
+#include <iostream>
 
 bool isLevelLine(int a, int b){
     if (a == 0 && b == 0) return true;
