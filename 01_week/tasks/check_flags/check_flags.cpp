@@ -16,8 +16,8 @@ enum class CheckFlags : uint8_t {
 };
 
 void PrintCheckFlags(CheckFlags flags) {  
+    constexpr static const auto all { static_cast<uint8_t>(CheckFlags::ALL) };
     const auto value { static_cast<uint8_t>(flags) };
-    const auto all { static_cast<uint8_t>(CheckFlags::ALL) };
     
     // Есть биты вне диапазона
     if ((value & ~all) != 0) {
