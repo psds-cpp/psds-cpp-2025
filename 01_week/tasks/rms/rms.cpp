@@ -3,7 +3,7 @@
 #include <cstddef>
 
 double CalculateRMS(double values[], size_t size) {
-    if (size == 0) {
+    if (size == 0 || values == nullptr) {
         return 0.0;
     }
     
