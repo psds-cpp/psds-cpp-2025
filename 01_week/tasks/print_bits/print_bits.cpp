@@ -1,7 +1,30 @@
 #include <cstddef>
 #include <stdexcept>
 
-
+// value - целое число, его нужно вывести в двоичной форме
+// bytes типа size_t потому что bytes это количсевто байт
 void PrintBits(long long value, size_t bytes) {
-    throw std::runtime_error{"Not implemented"};
+    // по условию мы не можем выполнить функцию когда у нас
+    // количсевто байт = 0, либо количесвто байт > 8
+    if (bytes == 0 || bytes > 8) {
+        return;
+    }
+    // Считаем общее количсевто бит, 1 байт = 1 бит 
+    size_t bits = bytes * 8;
+    // выводим префикс "0b", дальше будет идти предствление числа
+    std::cout << "0b";
+    // цикл будет выполняться bits раз 
+    for (size_t i = 0; i < bits; ++i) {
+        size_t bit_index = bits - 1 - i;
+        // побитовый сдвиг, сравниваем младший бит с 1 и выводим результат
+        std::cout << ((value >> bit_index) & 1);
+
+        // если i + 1 делится на 4 без остатка и это не полседний бит, 
+        // ставим "'"
+        if ((i + 1) % 4 == 0 && (i + 1) != bits) {
+            std::cout << "'";
+        }
+    }
+    // перевод строки
+    std::cout << '\n';
 }
