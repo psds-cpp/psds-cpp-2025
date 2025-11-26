@@ -86,7 +86,7 @@ size_t CharChanger(char array[], size_t size, char delimiter) {
         }
     }
 
-    // Проверка, что строка правильно завершена нуль-терминатором
+    // Проверка того, что строка правильно завершена нуль-терминатором
     if (write_pos < size) {
         array[write_pos] = '\0';
     }
