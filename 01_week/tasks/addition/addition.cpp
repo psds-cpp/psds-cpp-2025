@@ -3,5 +3,5 @@
 
 
 int64_t Addition(int a, int b) {
-    return a+b;
+    return static_cast<int64_t>(a) + static_cast<int64_t>(b);
 }
