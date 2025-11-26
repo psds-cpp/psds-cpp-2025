@@ -1,7 +1,9 @@
 name: Testing Tasks
 
-#on: [push]
-
+on:
+  push:
+    branches:
+      - development
 jobs:
   test:
     runs-on: ubuntu-latest
