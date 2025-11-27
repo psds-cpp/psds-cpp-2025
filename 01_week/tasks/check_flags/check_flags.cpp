@@ -1,5 +1,7 @@
 #include <cstdint>
 #include <stdexcept>
+#include <string>
+#include <iostream>
 
 
 enum class CheckFlags : uint8_t {
@@ -14,5 +16,49 @@ enum class CheckFlags : uint8_t {
 };
 
 void PrintCheckFlags(CheckFlags flags) {
-    throw std::runtime_error{"Not implemented"};
+
+    uint8_t value = static_cast<uint8_t>(flags);
+    if (value > static_cast<uint8_t>(CheckFlags::ALL)){
+        return; // Если выходит за диапазон то вывод пустой
+    }
+    if (value == static_cast<uint8_t>(CheckFlags::NONE)){
+        std::cout << "[]";
+        return; // Если 0 то пустые кавычки
+    }
+
+    std::string check_flags = "[";
+    bool first = true;
+
+    if ((value & static_cast<uint8_t>(CheckFlags::TIME)) != 0){
+        if (!first) check_flags += ",";
+        check_flags += "TIME";
+        first = false;
+    }
+    if ((value & static_cast<uint8_t>(CheckFlags::DATE)) != 0){
+        if (!first) check_flags += ",";
+        check_flags += "DATE";
+        first = false;
+    }
+    if ((value & static_cast<uint8_t>(CheckFlags::USER)) != 0){
+        if (!first) check_flags += ",";
+        check_flags += "USER";
+        first = false;
+    }
+    if ((value & static_cast<uint8_t>(CheckFlags::CERT)) != 0){
+        if (!first) check_flags += ",";
+        check_flags += "CERT";
+        first = false;
+    }
+    if ((value & static_cast<uint8_t>(CheckFlags::KEYS)) != 0){
+        if (!first) check_flags += ",";
+        check_flags += "KEYS";
+        first = false;
+    }
+    if ((value & static_cast<uint8_t>(CheckFlags::DEST)) != 0){
+        if (!first) check_flags += ",";
+        check_flags += "DEST";
+        first = false;
+    }
+    check_flags += "]";
+    std::cout << check_flags;
 }
