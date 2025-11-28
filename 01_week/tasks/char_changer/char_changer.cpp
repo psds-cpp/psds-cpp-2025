@@ -61,6 +61,7 @@ size_t CharChanger(char array[], size_t size, char delimiter = ' ')
                     temp >= 10 ? (array[temp_ptr] = '0') : (array[temp_ptr] = '0' + temp); 
                     ++temp_ptr;                                                            
                 }
+                i += temp - 1;
             }
             else
             { //...если это не пробел. если пробел, то все ок, меняем:
