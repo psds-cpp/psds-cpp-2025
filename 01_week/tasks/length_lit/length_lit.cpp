@@ -45,8 +45,9 @@ constexpr double operator "" _cm_to_ft(long double value) {
 }
 
 constexpr double operator "" _cm_to_in(long double value) {
-    return static_cast<double>(value / 30.48);
+    return static_cast<double>(value / 2.54);
 
 }
+
 
 
