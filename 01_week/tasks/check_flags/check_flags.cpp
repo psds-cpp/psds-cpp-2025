@@ -18,6 +18,7 @@ enum class CheckFlags : uint8_t {
 };
 
 void PrintCheckFlags(CheckFlags flags) {
+    //Хэш-таблица для быстрого преобразования uint8_t -> string
     std::unordered_map<uint8_t, std::string> flagStr = {
         {0b00000001,"TIME"},
         {0b00000010,"DATE"},
@@ -27,9 +28,12 @@ void PrintCheckFlags(CheckFlags flags) {
         {0b00100000,"DEST"}
     };
     
+    //Вектор с результатом работы функции
     std::vector<std::string> result = {"["};
+    //Резервирование места под элементы, чтобы не было лишних реаллокаций
     result.reserve(16);
 
+    
     if(flags == CheckFlags::NONE){
         std::cout << "[]";
         return;
@@ -39,11 +43,13 @@ void PrintCheckFlags(CheckFlags flags) {
         std::cout << "[TIME,DATE,USER,CERT,KEYS,DEST]";
         return;
     }
+    //Если флаг больше ALL значит он выходит из диапазона значений флагов
     else if(static_cast<uint8_t>(flags) > static_cast<uint8_t>(CheckFlags::ALL))
     {
         std::cout << "";
         return;
     }
+    //В остальных случаях флаги перебираются и добавляюся в вектор если присутствуют 
     else
     {
         for(uint8_t flag = 1; flag < static_cast<uint8_t>(CheckFlags::ALL); flag *= 2){
@@ -54,10 +60,11 @@ void PrintCheckFlags(CheckFlags flags) {
         }
     }
 
-    result.pop_back();
+
+    result.pop_back();       //Убираем лишнюю запятую
     result.push_back("]");
 
-
+    //Вывод результата
     for(auto& elem : result){
         std::cout << elem;
     }
