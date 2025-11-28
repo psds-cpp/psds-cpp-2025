@@ -1,5 +1,6 @@
 #include <cstdint>
 #include <stdexcept>
+#include <iostream>
 
 
 enum class CheckFlags : uint8_t {
@@ -14,5 +15,44 @@ enum class CheckFlags : uint8_t {
 };
 
 void PrintCheckFlags(CheckFlags flags) {
-    throw std::runtime_error{"Not implemented"};
+    uint8_t value = static_cast<uint8_t>(flags);
+    
+    if (value > static_cast<uint8_t>(CheckFlags::ALL)) {
+        return;
+    }
+    
+    // Обработка специального случая NONE
+    if (flags == CheckFlags::NONE) {
+        std::cout << "[]";
+        return;
+    }
+    
+    std::cout<< "[";
+    const char* comma = "";
+    if ((value & static_cast<uint8_t>(CheckFlags::TIME)) !=0) {
+        std::cout<< comma << "TIME";
+        comma = ",";
+    }
+    if ((value & static_cast<uint8_t>(CheckFlags::DATE)) !=0) {
+        std::cout<< comma << "DATE";
+        comma = ",";
+    }
+    if ((value & static_cast<uint8_t>(CheckFlags::USER)) !=0) {
+        std::cout<< comma << "USER";
+        comma = ",";
+    }
+    if ((value & static_cast<uint8_t>(CheckFlags::CERT)) !=0) {
+        std::cout<< comma << "CERT";
+        comma = ",";
+    }
+    if ((value & static_cast<uint8_t>(CheckFlags::KEYS)) !=0) {
+        std::cout<< comma << "KEYS";
+        comma = ",";
+    }
+    if ((value & static_cast<uint8_t>(CheckFlags::DEST)) !=0) {
+        std::cout<< comma << "DEST";
+        comma = ",";
+    }
+    
+    std::cout<<"]";
 }
