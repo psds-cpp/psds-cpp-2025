@@ -14,5 +14,32 @@ enum class CheckFlags : uint8_t {
 };
 
 void PrintCheckFlags(CheckFlags flags) {
-    throw std::runtime_error{"Not implemented"};
+    uint8_t value = static_cast<uint8_t>(flags);
+    const uint8_t valid_mask = 0x3F; // 0b00111111
+
+    if (value & ~valid_mask) {
+        std::cout << "";
+        return;
+    }
+
+    std::string output = "[";
+    const char* separator = "";
+
+    auto add_flag = [&](CheckFlags flag, const char* name) {
+        if (value & static_cast<uint8_t>(flag)) {
+            output += separator;
+            output += name;
+            separator = ",";
+        }
+    };
+
+    add_flag(CheckFlags::TIME, "TIME");
+    add_flag(CheckFlags::DATE, "DATE");
+    add_flag(CheckFlags::USER, "USER");
+    add_flag(CheckFlags::CERT, "CERT");
+    add_flag(CheckFlags::KEYS, "KEYS");
+    add_flag(CheckFlags::DEST, "DEST");
+
+    output += "]";
+    std::cout << output;
 }
