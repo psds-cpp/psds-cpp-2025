@@ -2,6 +2,7 @@
 #include <cmath>    
 #include <stdexcept>
 
+
 double CalculateRMS(double values[], size_t size) {
     if (size == 0) return 0.0;
     if (values == nullptr) return 0.0;  
