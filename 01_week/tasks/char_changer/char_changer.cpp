@@ -58,23 +58,24 @@ size_t CharChanger(char array[], size_t size, char delimiter = ' ')
                 ++temp_ptr;
                 if (temp > 1)
                 {                                                                          
-                    array[temp_ptr] = (temp>=10)? '0':'0'+temp; 
+                    temp >= 10 ? (array[temp_ptr] = '0') : (array[temp_ptr] = '0' + temp); 
                     ++temp_ptr;                                                            
                 }
-                i += temp - 1;
             }
             else
             { //...если это не пробел. если пробел, то все ок, меняем:
                 size_t temp = 1;
-                while (i + temp < size && array[i] == array[i + temp])
+                while (temp + i < size && array[i] == array[i + temp])
                     ++temp;
-                
+                i += temp - 1;
                 array[temp_ptr] = delimiter;
                 ++temp_ptr;
-                i += temp - 1;
             }
         }
     }
-    array[temp_ptr]='\0';
+    for (size_t i = temp_ptr; i < size; ++i)
+    {
+        array[i] = '\0'; // зануляем все оставшееся место в памяти
+    }
     return temp_ptr;
 }
