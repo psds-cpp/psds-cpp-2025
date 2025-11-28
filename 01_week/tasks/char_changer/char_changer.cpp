@@ -75,9 +75,6 @@ size_t CharChanger(char array[], size_t size, char delimiter = ' ')
             }
         }
     }
-    for (size_t i = temp_ptr; i < size; ++i)
-    {
-        array[i] = '\0'; // зануляем все оставшееся место в памяти
-    }
+    array[temp_ptr]='\0';
     return temp_ptr;
 }
