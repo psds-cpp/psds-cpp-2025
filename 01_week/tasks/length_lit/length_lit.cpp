@@ -1,5 +1,6 @@
 #include <cstdint>
 
+
 constexpr long double operator"" _ft_to_m(long double v) {
     return static_cast<double>(v * 0.3048L);
 }
