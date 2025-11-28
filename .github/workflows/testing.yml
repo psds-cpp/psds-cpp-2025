@@ -28,7 +28,7 @@ jobs:
           
           echo "Changed files: $changed_files"
           
-          tasks=("addition" "print_bits" "check_flags" "length_lit" "quadratic" "char_changer")
+          tasks=("addition" "rms" "print_bits" "check_flags" "length_lit" "quadratic" "char_changer")
           
           for task in "${tasks[@]}"; do
             if echo "$changed_files" | grep -q "$task/"; then
