@@ -1,12 +1,15 @@
 #include <cstddef>
 #include <stdexcept>
+#include <stdlib.h>
+#include <string.h>
 
 size_t CharChanger(char array[], size_t size, char delimiter = ' ')
 {
+    char array_fin[size]={};
 
     size_t temp_ptr = 0; // переменная для хранения текущего положения данных  в массиве
 
-    for (size_t i = 0; i < size; ++i)
+    for (size_t i = 0; i < size-1; ++i)
     {
 
         if (isalnum(array[i]))
@@ -17,17 +20,17 @@ size_t CharChanger(char array[], size_t size, char delimiter = ' ')
                 if (i + 1 < size)
                     while (temp + i < size && array[i] == array[i + temp])
                         ++temp;
-                array[temp_ptr] = array[i];
+                array_fin[temp_ptr] = array[i];
                 if (islower(array[i]))
                 { // если она низкая, делаем ее высокой
-                    array[temp_ptr] = toupper(array[temp_ptr]);
+                    array_fin[temp_ptr] = toupper(array[i]);
                 }
                 ++temp_ptr;    // счетчик на конец преобразованного массива +1
                 i += temp - 1; // смещаем счетчик рабочий
 
                 if (temp > 1)
                 {                                                                          // если у нас много повторяющихся букоф
-                    temp >= 10 ? (array[temp_ptr] = '0') : (array[temp_ptr] = '0' + temp); // ставим число повторений, либо 0, если повторений больше 10
+                    temp >= 10 ? (array_fin[temp_ptr] = '0') : (array_fin[temp_ptr] = '0' + temp); // ставим число повторений, либо 0, если повторений больше 10
                     ++temp_ptr;                                                            // увеличиваем рабочий счетчик
                 }
             }
@@ -36,12 +39,12 @@ size_t CharChanger(char array[], size_t size, char delimiter = ' ')
                 size_t temp = 1;
                 while (temp + i < size && array[i] == array[i + temp])
                     ++temp;
-                array[temp_ptr] = '*';
+                array_fin[temp_ptr] = '*';
                 ++temp_ptr;
                 i += temp - 1;
                 if (temp > 1)
                 {                                                                          // если у нас много повторяющихся цифр
-                    temp >= 10 ? (array[temp_ptr] = '0') : (array[temp_ptr] = '0' + temp); // ставим число повторений, либо 0, если повторений больше 10
+                    temp >= 10 ? (array_fin[temp_ptr] = '0') : (array_fin[temp_ptr] = '0' + temp); // ставим число повторений, либо 0, если повторений больше 10
                     ++temp_ptr;                                                            // увеличиваем рабочий счетчик
                 }
             }
@@ -54,22 +57,22 @@ size_t CharChanger(char array[], size_t size, char delimiter = ' ')
                 size_t temp = 1;
                 while (temp + i < size && array[i] == array[i + temp])
                     ++temp;
-                array[temp_ptr] = '_';
+                array_fin[temp_ptr] = '_';
                 ++temp_ptr;
-                if (temp > 1)
-                {                                                                          
-                    temp >= 10 ? (array[temp_ptr] = '0') : (array[temp_ptr] = '0' + temp); 
-                    ++temp_ptr;                                                            
-                }
                 i += temp - 1;
+                if (temp > 1)
+                {                                                                          // если у нас много повторяющихся цифр
+                    temp >= 10 ? (array_fin[temp_ptr] = '0') : (array_fin[temp_ptr] = '0' + temp); // ставим число повторений, либо 0, если повторений больше 10
+                    ++temp_ptr;                                                            // увеличиваем рабочий счетчик
+                }
             }
             else
             { //...если это не пробел. если пробел, то все ок, меняем:
                 size_t temp = 1;
                 while (temp + i < size && array[i] == array[i + temp])
                     ++temp;
-                i += temp - 1;
-                array[temp_ptr] = delimiter;
+                i += temp-1;
+                array_fin[temp_ptr] = delimiter;
                 ++temp_ptr;
             }
         }
@@ -78,5 +81,9 @@ size_t CharChanger(char array[], size_t size, char delimiter = ' ')
     {
         array[i] = '\0'; // зануляем все оставшееся место в памяти
     }
+
+    strncpy(array, array_fin, size);
+    
     return temp_ptr;
 }
+
