@@ -1,5 +1,6 @@
 #include <cstddef>
 #include <stdexcept>
+#include <cctype>
 
 size_t CharChanger(char array[], size_t size, char delimiter = ' ')
 {
@@ -55,6 +56,7 @@ size_t CharChanger(char array[], size_t size, char delimiter = ' ')
                 while (temp + i < size && array[i] == array[i + temp])
                     ++temp;
                 array[temp_ptr] = '_';
+                ++temp_ptr;
                 if (temp > 1)
                 {                                                                          
                     temp >= 10 ? (array[temp_ptr] = '0') : (array[temp_ptr] = '0' + temp); 
