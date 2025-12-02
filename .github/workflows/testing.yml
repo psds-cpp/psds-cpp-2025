@@ -1,9 +1,31 @@
+ |
+        
+          # Проверяем, есть ли предыдущий коммит
+          if git rev-parse HEAD~1 > /dev/null 2>&1; then
+            changed_files=$(git diff --name-only HEAD~1 HEAD)
+          else
+            changed_files=$(git ls-files)
+          fi
+          
+          echo "Changed files:"
+          echo "$changed_files"
+          
+<<<<<<< HEAD
+          tasks=("addition" "print_bits" "check_flags" "length_lit" "quadratic"  "rms" "char_changer")
+=======
+          tasks=("addition" "rms" "print_bits" "check_flags" "length_lit" "quadratic" "char_changer"
+                 "swap_ptr" "func_array" "longest" "last_of_us" "little_big" "pretty_array")
+          
+          declare -i passed_count=0
+          declare -i failed_count=0
+          declare -i task_count=0
+          
+          echo "=== Starting tests for changed tasks ==="
+>>>>>>> main
 name: Testing Tasks
 
-on:
-  push:
-    branches:
-      - development
+on: [push, pull_request]
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -18,20 +40,10 @@ jobs:
 
       - name: Build and run tests for changed tasks
         run: |
-        
-          # Проверяем, есть ли предыдущий коммит
-          if git rev-parse HEAD~1 > /dev/null 2>&1; then
-            changed_files=$(git diff --name-only HEAD~1 HEAD)
-          else
-            changed_files=$(git ls-files)
-          fi
-          
-          echo "Changed files: $changed_files"
-          
-          tasks=("addition" "print_bits" "check_flags" "length_lit" "quadratic"  "rms" "char_changer")
           
           for task in "${tasks[@]}"; do
-            if echo "$changed_files" | grep -q "$task/"; then
+            if echo "$changed_files" | grep -q "tasks/$task/"; then
+              task_count+=1
               echo "=== Processing $task ==="
           
               if cmake --build build --target test_$task; then
@@ -39,13 +51,34 @@ jobs:
                 
                 if ./build/tasks/test_$task; then
                   echo "✅ test_$task PASSED"
+                  passed_count+=1
                 else
                   echo "❌ test_$task FAILED"
-                  exit 1
+                  failed_count+=1
                 fi
               else
                 echo "❌ test_$task build FAILED"
-                exit 1
+                failed_count+=1
               fi
             fi
           done
+<<<<<<< HEAD
+=======
+          
+          echo "=== Test Results Summary ==="
+          echo "Total tasks in list: ${#tasks[@]}"
+          echo "Processed: $task_count"
+          echo "✅ Passed: $passed_count"
+          echo "❌ Failed: $failed_count"
+
+          if [ $failed_count -gt 0 ]; then
+            echo "❌ Some tasks failed!"
+            exit 1
+          elif [ $task_count -eq 0 ]; then
+            echo "No tasks were processed (no changes)"
+            exit 0
+          else
+            echo "✅ All processed tasks passed!"
+            exit 0
+          fi
+>>>>>>> main
