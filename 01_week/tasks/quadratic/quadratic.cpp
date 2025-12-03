@@ -4,10 +4,14 @@
 #include <cmath>
 #include <algorithm>
 
-void PrintRoot(double root) {
-    if (std::abs(root) < 1e-10) {  // Проверяем, близок ли корень к нулю
+void PrintRoot(double root)
+{
+    if (std::abs(root) < 1e-10)
+    { // Проверяем, близок ли корень к нулю
         std::cout << "0";
-    } else {
+    }
+    else
+    {
         std::cout << root;
     }
 }
@@ -66,6 +70,7 @@ void SolveQuadratic(int a, int b, int c)
         {
             std::swap(root1, root2);
         }
+
         PrintRoot(root1);
         std::cout << " ";
         PrintRoot(root2);
