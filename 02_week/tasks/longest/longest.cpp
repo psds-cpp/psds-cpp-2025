@@ -30,3 +30,8 @@ const char* FindLongestSubsequence(const char* begin, const char* end, size_t& c
 
     return start_of_longest_seq;
 }
+
+char* FindLongestSubsequence(char* begin, char* end, size_t& count){
+    const char* const_result = FindLongestSubsequence(const_cast<const char*>(begin), const_cast<const char*>(end), count);
+    return const_cast<char*>(const_result);
+}
