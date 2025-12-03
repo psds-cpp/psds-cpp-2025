@@ -1,6 +1,5 @@
-#include <stdexcept>
-
-
-void SwapPtr(/* write arguments here */) {
-    throw std::runtime_error{"Not implemented"};
+void SwapPtr(auto*& ptr1, auto*& ptr2) {
+    auto temp = ptr1;
+    ptr1 = &*ptr2;
+    ptr2 = &*temp;
 }
