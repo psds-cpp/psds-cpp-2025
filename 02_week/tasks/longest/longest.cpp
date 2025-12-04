@@ -1,5 +1,5 @@
 #include <stdexcept>
-#include <cstddef>
+//include <cstdef>
 
 const char* FindLongestSubsequence(const char* begin, const char* end, std::size_t& count) {
     // Проверка на некорректные указатели
