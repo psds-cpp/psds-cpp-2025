@@ -8,15 +8,15 @@ char* FindLongestSubsequence(const char* begin, const char* end, size_t& count) 
     if(begin == nullptr || end == nullptr) return nullptr;
 
     size_t curLen{1};
-    char* curBegin{const_cast<char*>(begin)};
-    for(char* curent = const_cast<char*>(begin); curent < end; ++curent){
+    const char* curBegin{begin};
+    for(const char* curent = begin; curent < end; ++curent){
         if(curent+1 != end && *curent == *(curent+1)){
             curBegin = curLen == 1 ? curent : curBegin;
             ++curLen;
             continue;
         }
 
-        res = count < curLen ? curBegin : res;
+        res = count < curLen ? const_cast<char*>(curBegin) : res;
         count = count < curLen ? curLen : count;
         curLen = 1;
     }
