@@ -1,6 +1,18 @@
-#include <stdexcept>
 
+void SwapPtr(int*& a, int*& b) {
+    int* tmp = a;
+    a = b;
+    b = tmp;
+}
 
-void SwapPtr(/* write arguments here */) {
-    throw std::runtime_error{"Not implemented"};
+void SwapPtr(const int*& a, const int*& b) {
+    const int* temp = a;
+    a = b;
+    b = temp;
+}
+
+void SwapPtr(int**& a, int**& b) {
+    int** temp = a;
+    a = b;
+    b = temp;
 }
