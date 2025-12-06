@@ -4,3 +4,4 @@ CMakeLists.txt.user
 CMakeSettings.json
 CMakeUserPresets.json
 .vscode/
+*.out
