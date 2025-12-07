@@ -1,4 +1,6 @@
-#include <stdexcept>
+ #include <stdexcept>
+
+/*Функция обмена указателей*/
 
 void SwapPtr(int*& ptr1, int*& ptr2) {
     int* temp = ptr1;
