@@ -2,7 +2,7 @@
 
 /*Функция для вывода представления целого числа в памяти*/
 
-void PrintMemory(int value, bool reverse = true) {
+void PrintMemory(int value, bool reverse = false) {
 
     // Преобразование указателя на int в указатель на беззнаковые байты
     const unsigned char* bytes = reinterpret_cast<const unsigned char*>(&value);
@@ -40,7 +40,7 @@ void PrintMemory(int value, bool reverse = true) {
 
 /*Функция для вывода представления числа с плавающей точкой в памяти*/
 
-void PrintMemory(double value, bool reverse = true) {
+void PrintMemory(double value, bool reverse = false) {
 
     // Преобразование указателя на double в указатель на беззнаковые байты
     const unsigned char* bytes = reinterpret_cast<const unsigned char*>(&value);
