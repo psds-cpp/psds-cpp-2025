@@ -12,26 +12,26 @@ void SolveQuadratic(int a, int b, int c) {
     else if (a == 0 && b != 0 && c == 0)
         std::cout << "0";
     else if (a == 0 && b != 0 && c != 0)
-        std::cout << std::setprecision(6) << static_cast<long double>(-c) / static_cast<long double>(b);
+        std::cout << std::setprecision(6) << static_cast<long double>(-c) / b;
     else if (a != 0 && b == 0 && c == 0)
         std::cout << "0";
     else if (a != 0 && b == 0 && c != 0) {
         if (c > 0)
             std::cout << "no solutions";
         else {
-            long double x = sqrt(static_cast<long double>(-c) / static_cast<long double>(a));
+            long double x = sqrt(static_cast<long double>(-c) / a);
             std::cout << std::setprecision(6) << -x << ' ' << x;
         }   
     }
     else if (a != 0 && b != 0 && c == 0) {
-        long double x = static_cast<long double>(-b) / static_cast<long double>(a);
+        long double x = static_cast<long double>(-b) / a;
         if (x < 0)
             std::cout << std::setprecision(6) << x << " 0";
         else
             std::cout << std::setprecision(6) << "0 " << x;
     }
     else {
-        long long d = (long long)b*b - 4LL*a*c;
+        long long d = static_cast<long double>(b)*b - 4LL*a*c;
         if (d < 0)
             std::cout << "no solutions";
         else if (d == 0)
