@@ -2,8 +2,8 @@
 
 /*Представление числа в памяти*/
 
-void PrintMemory(int value, bool reverse) {
-    
+void PrintMemory(int value, bool reverse = false) {
+
     // Оперделение порядока байт
     const unsigned char* bytes = reinterpret_cast<const unsigned char*>(&value);
     
@@ -23,7 +23,7 @@ void PrintMemory(int value, bool reverse) {
     printf("\n");
 }
 
-void PrintMemory(double value, bool reverse) {
+void PrintMemory(double value, bool reverse = false) {
 
     // Оперделение порядока байт
     const unsigned char* bytes = reinterpret_cast<const unsigned char*>(&value);
