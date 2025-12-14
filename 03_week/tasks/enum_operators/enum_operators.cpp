@@ -29,7 +29,7 @@ constexpr CheckFlags operator|(CheckFlags lhs, CheckFlags rhs) {
     ));
 }
 
-// Оператор побитового И 
+/// Оператор побитового И 
 bool operator&(CheckFlags lhs, CheckFlags rhs) {
     CheckFlags sanitized_lhs = sanitize(lhs);
     CheckFlags sanitized_rhs = sanitize(rhs);
@@ -39,9 +39,11 @@ bool operator&(CheckFlags lhs, CheckFlags rhs) {
         return false;
     }
     
-    // Проверяем, есть ли общий флаг, побитовое И не равно нулю
-    return (static_cast<uint8_t>(sanitized_lhs) & 
-            static_cast<uint8_t>(sanitized_rhs)) != 0;
+    uint8_t lhs_bits = static_cast<uint8_t>(sanitized_lhs);
+    uint8_t rhs_bits = static_cast<uint8_t>(sanitized_rhs);
+    
+    return ((lhs_bits & rhs_bits) == lhs_bits) || 
+           ((rhs_bits & lhs_bits) == rhs_bits);
 }
 
 // Оператор исключающего ИЛИ
