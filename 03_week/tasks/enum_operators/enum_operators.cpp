@@ -1,5 +1,7 @@
+#include <cstdint>
 #include <stdexcept>
-#include <vector>
+#include <bits/stdc++.h>
+#include <sys/types.h>
 
 enum class CheckFlags : uint8_t {
     NONE = 0,
@@ -12,22 +14,55 @@ enum class CheckFlags : uint8_t {
     ALL = TIME | DATE | USER | CERT | KEYS | DEST
 };
 
-/* return_type */ operator|(/* args */) {
-    throw std::runtime_error{"Not implemented"};
+constexpr uint8_t flagAll = static_cast<uint8_t>(CheckFlags::ALL);
+
+constexpr uint8_t toUi(CheckFlags flag) {
+    return static_cast<uint8_t>(flag) & flagAll;
 }
 
-/* return_type */ operator&(/* args */) {
-    throw std::runtime_error{"Not implemented"};
+constexpr CheckFlags operator|(CheckFlags lFlag, CheckFlags rFlag) {
+    return static_cast<CheckFlags>(toUi(lFlag) | toUi(rFlag));
 }
 
-/* return_type */ operator^(/* args */) {
-    throw std::runtime_error{"Not implemented"};
+constexpr bool operator&(CheckFlags lFlag, CheckFlags rFlag) {
+    uint8_t lFlagUi = toUi(lFlag);
+    uint8_t rFlagUi = toUi(rFlag);
+
+    if (lFlagUi == 0 || rFlagUi == 0)
+        return false;
+
+    return (lFlagUi & rFlagUi) == lFlagUi || (lFlagUi & rFlagUi) == rFlagUi;
 }
 
-/* return_type */ operator~(/* args */) {
-    throw std::runtime_error{"Not implemented"};
+constexpr CheckFlags operator^(CheckFlags lFlag, CheckFlags rFlag) {
+    return static_cast<CheckFlags>(toUi(lFlag) ^ toUi(rFlag));
 }
 
-/* return_type */ operator<<(/* args */) {
-    throw std::runtime_error{"Not implemented"};
+constexpr CheckFlags operator~(CheckFlags flag) {
+    return static_cast<CheckFlags>(flagAll & ~toUi(flag));
+}
+
+std::ostream& operator<<(std::ostream& os, CheckFlags flag) {
+    uint8_t num = toUi(flag);
+    bool first = true;
+    auto try_print = [&](CheckFlags f, const char* name) {
+        if (num & toUi(f)) {
+            if (!first)
+                os << ", ";
+            os << name;
+            first = false;
+        }
+    };
+
+    try_print(CheckFlags::TIME, "TIME");
+    try_print(CheckFlags::DATE, "DATE");
+    try_print(CheckFlags::USER, "USER");
+    try_print(CheckFlags::CERT, "CERT");
+    try_print(CheckFlags::KEYS, "KEYS");
+    try_print(CheckFlags::DEST, "DEST");
+
+    if (first)
+        os << "NONE";
+
+    return os;
 }
