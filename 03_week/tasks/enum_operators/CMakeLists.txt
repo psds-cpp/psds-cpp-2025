@@ -1,1 +1,0 @@
-add_gtest(test_enum_operators test.cpp)

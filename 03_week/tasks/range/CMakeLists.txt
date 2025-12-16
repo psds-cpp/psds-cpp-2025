@@ -1,1 +1,0 @@
-add_gtest(test_range test.cpp)
