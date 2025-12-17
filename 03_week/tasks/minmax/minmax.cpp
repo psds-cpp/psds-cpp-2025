@@ -1,28 +1,38 @@
 #include <vector>
-#include <stddef.h>
 
 
-struct MinMaxResult {
-    std::vector<int>::const_iterator min_it{};
-    std::vector<int>::const_iterator max_it{};
-};
+std::pair<std::vector<int>::const_iterator, std::vector<int>::const_iterator> MinMax(const std::vector<int>& arr) {
+    auto first = arr.begin(), last = arr.end();
 
+    if (first == last)
+        return {last, last};
 
-MinMaxResult MinMax(const std::vector<int>& arr) {
-    MinMaxResult result{arr.end(), arr.end()};
+    auto min = first, max = first;
 
-    if (arr.empty()) return result;
-
-    result = {arr.begin(), arr.begin()};
-
-    for (size_t i = 1; i < arr.size(); ++i) {
-        if (arr[i] >= *result.max_it) {
-            result.max_it = arr.begin() + i;
+    while (++first != last) {
+        auto i = first;
+        if (++first == last) {
+            if (*i < *min)
+                min = i;
+            else if (*i >= *max)
+                max = i;
+            break;
         }
-        else if (arr[i] < *result.min_it) {
-            result.min_it = arr.begin() + i;
+        else {
+            if (*first < *i) {
+                if (*first < *min)
+                    min = first;
+                if (*i >= *max)
+                    max = i;
+            }
+            else {
+                if (*i < *min)
+                    min = i;
+                if (*first >= *max)
+                    max = first;
+            }
         }
     }
 
-    return result;
+    return {min, max};
 }
