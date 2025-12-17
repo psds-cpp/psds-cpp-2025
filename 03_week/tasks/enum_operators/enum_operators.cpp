@@ -80,6 +80,10 @@ std::ostream& operator<<(std::ostream& lhs, const CheckFlags& rhs) {
             case CheckFlags::DEST:
                 flags += "DEST, ";
                 break;
+            case CheckFlags::NONE:
+                break;
+            case CheckFlags::ALL:
+                break;
         }
     }
 
