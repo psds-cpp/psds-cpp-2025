@@ -6,6 +6,6 @@ struct DataStats {
     double sd = 0.0;
 };
 
-/* return_type */ CalculateDataStats(/* args */) {
+double CalculateDataStats(/* args */) {
     throw std::runtime_error{"Not implemented"};
 }
