@@ -50,7 +50,6 @@ size_t CharChanger(char array[], size_t size, char delimiter) {
         
         // Не пробел - сбрасываем флаг последовательности пробелов
         in_space_sequence = false;
-        just_wrote_delimiter = false;
         
         // Преобразование символа
         char transformed_char = current_char;
