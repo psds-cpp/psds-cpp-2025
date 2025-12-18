@@ -1,7 +1,11 @@
+#include <atomic>
 #include <cstdint>
+#include <iterator>
 #include <ostream>
+#include <stdatomic.h>
 #include <sys/types.h>
 #include <type_traits>
+#include <vector>
 
 enum class CheckFlags : uint8_t {
     NONE = 0,
@@ -14,18 +18,26 @@ enum class CheckFlags : uint8_t {
     ALL = TIME | DATE | USER | CERT | KEYS | DEST
 };
 
-// Для GoogleTest
-explicit operator bool(CheckFlags f) {
-    return static_cast<std::underlying_type_t<CheckFlags>>(f) != 0;
+const std::vector<std::pair<CheckFlags, std::string_view>> checkNames = {
+    {CheckFlags::TIME, "TIME"},
+    {CheckFlags::DATE, "DATE"},
+    {CheckFlags::USER, "USER"},
+    {CheckFlags::CERT, "CERT"},
+    {CheckFlags::KEYS, "KEYS"},
+    {CheckFlags::DEST, "DEST"},
+};
+
+std::underlying_type_t<CheckFlags> getVal(CheckFlags f) {
+    return static_cast<std::underlying_type_t<CheckFlags>>(f) &
+        static_cast<std::underlying_type_t<CheckFlags>>(CheckFlags::ALL);
 }
 
 bool operator!(const CheckFlags f) {
-    return static_cast<std::underlying_type_t<CheckFlags>>(f) == 0;
+    return getVal(f) == 0;
 }
 
 bool operator==(CheckFlags lhs, CheckFlags rhs) {
-    return static_cast<std::underlying_type_t<CheckFlags>>(lhs) ==
-           static_cast<std::underlying_type_t<CheckFlags>>(rhs);
+    return getVal(lhs) == getVal(rhs);
 }
 
 bool operator!=(CheckFlags lhs, CheckFlags rhs) {
@@ -33,33 +45,50 @@ bool operator!=(CheckFlags lhs, CheckFlags rhs) {
 }
 
 CheckFlags operator|(CheckFlags lhs, CheckFlags rhs) {
-    return static_cast<CheckFlags>(
-            (static_cast<std::underlying_type_t<CheckFlags>>(lhs) |
-            static_cast<std::underlying_type_t<CheckFlags>>(rhs)) & static_cast<std::underlying_type_t<CheckFlags>>(CheckFlags::ALL)
-    );
+    return static_cast<CheckFlags>((getVal(lhs) | getVal(rhs)) & getVal(CheckFlags::ALL));
 }
 
-CheckFlags operator&(CheckFlags lhs, CheckFlags rhs) {
-    auto uintLhs = static_cast<std::underlying_type_t<CheckFlags>>(lhs);
-    auto uintRhs = static_cast<std::underlying_type_t<CheckFlags>>(rhs);
+bool operator&(CheckFlags lhs, CheckFlags rhs) {
+    auto lhsVal = getVal(lhs);
+    auto rhsVal = getVal(rhs);
+
+    if (lhsVal == 0 || rhsVal == 0) {
+        return false;
+    }
     
-    return static_cast<CheckFlags>(uintLhs & uintRhs);
+    return ((lhsVal & rhsVal) == lhsVal) || ((lhsVal & rhsVal) == rhsVal);
 }
 
 CheckFlags operator^(CheckFlags lhs, CheckFlags rhs) {
-    return static_cast<CheckFlags>(
-        static_cast<std::underlying_type_t<CheckFlags>>(lhs) ^
-        static_cast<std::underlying_type_t<CheckFlags>>(rhs)
-    );
+    return static_cast<CheckFlags>((getVal(lhs) ^ getVal(rhs)) & getVal(CheckFlags::ALL));
 }
 
 CheckFlags operator~(const CheckFlags& f) {
-    return static_cast<CheckFlags>(~static_cast<std::underlying_type_t<CheckFlags>>(f));
+    return static_cast<CheckFlags>((~getVal(f)) & getVal(CheckFlags::ALL));
 }
 
 std::ostream& operator<<(std::ostream& os, const CheckFlags& f) {
-    if (f == CheckFlags::ALL) {
+    std::string needed_checks = "";
+
+    auto fVal = getVal(f);
+
+    if (f == CheckFlags::NONE) {
+        os << "NONE";
         return os;
-    }    
+    }
+
+    bool first = true;
+    for (const auto& [key, val] : checkNames) {
+        if (fVal & getVal(key)) {
+            if (!first) {
+                needed_checks += ", ";
+            }
+
+            needed_checks += val;
+            first = false;
+        } 
+    }
+
+    os << needed_checks;
     return os;
 }
