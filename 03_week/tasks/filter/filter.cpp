@@ -1,4 +1,4 @@
-#include <stdexcept>
+#include <vector>
 
 typedef bool (*Predicate)(int);
 
@@ -8,7 +8,7 @@ void Filter(std::vector<int> &v, Predicate predicateFunc) {
     }
     
     for (auto it = v.begin(); it != v.end();) {
-        if (predicateFunc(*it)) {
+        if (!predicateFunc(*it)) {
             it = v.erase(it);
         } else {
             ++it;
