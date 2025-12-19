@@ -1,5 +1,6 @@
 #include <vector>
 
+
 std::vector<int> Range(int from, int to, int step = 1) {
     std::vector<int> result;т
     if (step == 0) {
