@@ -1,4 +1,3 @@
-#include <algorithm>
 #include <initializer_list>
 #include <stack>
 #include <vector>
@@ -19,12 +18,17 @@ public:
 
     Queue(std::initializer_list<int> list) : inputV_(list) {};
 
-    Queue(size_t size) {
+    Queue(const size_t size) {
         inputV_.reserve(size);
         outputV_.reserve(size);
-    }
+    };
+    
+    Queue(const int size) {
+        inputV_.reserve(size);
+        outputV_.reserve(size);
+    };
         
-    void Push(int val);
+    inline void Push(int val);
     bool Pop();
     int& Front();
     const int& Front() const;
@@ -62,12 +66,16 @@ void Queue::CopyIfOutEmpty() {
 }
 
 std::vector<int> Queue::GetQueueAsVector() const {
-    std::vector<int> tOut = outputV_;
-    tOut.insert(tOut.end(), inputV_.rbegin(), inputV_.rend());
-    return tOut;
+    std::vector<int> result;
+    
+    std::copy(outputV_.rbegin(), outputV_.rend(), std::back_inserter(result));
+    
+    std::copy(inputV_.begin(), inputV_.end(), std::back_inserter(result));
+    
+    return result;
 }
 
-void Queue::Push(int val) {
+inline void Queue::Push(int val) {
     inputV_.push_back(val);
 }
 
