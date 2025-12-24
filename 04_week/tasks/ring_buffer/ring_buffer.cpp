@@ -23,7 +23,7 @@ public:
     void Push(int val);
     bool TryPush(int val);
     void Pop();
-    bool TryPop();
+    bool TryPop(int& val);
     int& Front();
     const int& Front() const;
     int& Back();
@@ -46,11 +46,65 @@ private:
 };
 
 void RingBuffer::Push(int val) {
-    if ((frontIt + 1) != backIt) {
-        *frontIt = val;
-        ++frontIt;
+    ++frontIt;
+
+    if (frontIt == ringBuff.end()) {
+        frontIt = ringBuff.begin();
     }
 
+    if (frontIt == backIt) {
+        ++backIt;
+    }
+
+    if (backIt == ringBuff.end()) {
+        backIt = ringBuff.begin();
+    }
+
+    *frontIt = val;
+}
+
+bool RingBuffer::TryPush(int val) {
+    ++frontIt;
+
+    if (frontIt == ringBuff.end()) {
+        frontIt = ringBuff.begin();
+    }
+
+    if (frontIt == backIt) {
+        --frontIt;
+        return false; 
+    }
+
+    *frontIt = val;
     
+    return true;   
+}
+
+void RingBuffer::Pop() {
+    if (backIt == frontIt) {
+        return;
+    }
+
+    ++backIt;
+    
+    if (backIt == ringBuff.end()) {
+        backIt = ringBuff.begin();
+    }
+}
+
+bool RingBuffer::TryPop(int& val) {    
+    if (backIt == frontIt) {
+        return false;
+    }
+
+    val = *backIt;
+
+    ++backIt;
+    
+    if (backIt == ringBuff.end()) {
+        backIt = ringBuff.begin();
+    }
+
+    return true;
 }
     
