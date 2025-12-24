@@ -1,8 +1,9 @@
 #include <cmath>
 #include <numbers>
+#include <ostream>
 
 namespace {
-    constexpr double eps_ = 1e-6;
+    constexpr double eps_ = 1e-12;
     constexpr double pi_ = std::numbers::pi;
 }
 
@@ -30,8 +31,8 @@ public:
     double Real() const;
     double Imag() const;
 
-    Phasor Conj();
-    Phasor Inv();
+    Phasor Conj() const;
+    Phasor Inv() const;
 
 
 private:
@@ -44,7 +45,7 @@ private:
 
 void Phasor::PhaseNormalize(){
     phase_ -= mag_ >= 0 ? 0 : pi_;
-    phase_ = phase_ - 2 * pi_ * floor((phase_ + pi_) / (2 * pi_));
+    phase_ = phase_ - 2 * pi_ * floor((phase_ + pi_ - eps_) / (2 * pi_));
 }
 
 Phasor::Phasor(double mag, double phase) : mag_(mag), phase_(phase) {
@@ -104,6 +105,13 @@ double Phasor::Imag() const {
     return abs(mag_) * sin(phase_);
 }
 
+Phasor Phasor::Conj() const {
+    return Phasor(Real(), -Imag(), AlgTag{});
+}
+Phasor Phasor::Inv() const {
+    return Phasor(1 / Magnitude(), -Phase());
+}
+
 bool operator==(const Phasor& lhs, const Phasor& rhs){
     return (abs(lhs.Magnitude() - rhs.Magnitude()) < eps_) && 
            (abs(lhs.Phase() - rhs.Phase()) < eps_);
@@ -114,18 +122,92 @@ bool operator!=(const Phasor& lhs, const Phasor& rhs){
 }
 
 Phasor operator+(const Phasor& lhs, const Phasor& rhs){
-    rhs.Abs();
-    return lhs; //!!!!!!!!!!!!!!!!!!!!!!!!
+    return Phasor(lhs.Real() + rhs.Real(), lhs.Imag() + rhs.Imag(), AlgTag{});
 }
 Phasor operator-(const Phasor& lhs, const Phasor& rhs){
-    rhs.Abs();
-    return lhs; //!!!!!!!!!!!!!!!!!!!!!!!!
+    return Phasor(lhs.Real() - rhs.Real(), lhs.Imag() - rhs.Imag(), AlgTag{});
 }
 Phasor operator*(const Phasor& lhs, const Phasor& rhs){
-    rhs.Abs();
-    return lhs; //!!!!!!!!!!!!!!!!!!!!!!!!
+    return Phasor(lhs.Magnitude() * rhs.Magnitude(), lhs.Phase() + rhs.Phase());
 }
 Phasor operator/(const Phasor& lhs, const Phasor& rhs){
-    rhs.Abs();
-    return lhs; //!!!!!!!!!!!!!!!!!!!!!!!!
+    return Phasor(lhs.Magnitude() / rhs.Magnitude(), lhs.Phase() - rhs.Phase());
+}
+
+Phasor operator+(const Phasor& lhs, const double rhs){
+    return Phasor(lhs.Real() + rhs, lhs.Imag(), AlgTag{});
+}
+Phasor operator-(const Phasor& lhs, const double rhs){
+    return Phasor(lhs.Real() - rhs, lhs.Imag(), AlgTag{});
+}
+Phasor operator*(const Phasor& lhs, const double rhs){
+    return Phasor(lhs.Magnitude() * rhs, lhs.Phase());
+}
+Phasor operator/(const Phasor& lhs, const double rhs){
+    return Phasor(lhs.Magnitude() / rhs, lhs.Phase());
+}
+
+Phasor operator+(const double lhs, const Phasor& rhs){
+    return Phasor(lhs + rhs.Real(), rhs.Imag(), AlgTag{});
+}
+Phasor operator-(const double lhs, const Phasor& rhs){
+    return Phasor(lhs - rhs.Real(), -rhs.Imag(), AlgTag{});
+}
+Phasor operator*(const double lhs, const Phasor& rhs){
+    return Phasor(lhs * rhs.Magnitude(), rhs.Phase());
+}
+Phasor operator/(const double lhs, const Phasor& rhs){
+    return Phasor(lhs / rhs.Magnitude(), -rhs.Phase());
+}
+
+Phasor operator-(const Phasor& phasor){
+    return Phasor(-(phasor.Magnitude()), phasor.Phase());
+}
+
+Phasor& operator+=(Phasor& lhs, const Phasor& rhs){
+    lhs.SetCartesian(lhs.Real() + rhs.Real(), lhs.Imag() + rhs.Imag());
+    return lhs;
+}
+Phasor& operator-=(Phasor& lhs, const Phasor& rhs){
+    lhs.SetCartesian(lhs.Real() - rhs.Real(), lhs.Imag() - rhs.Imag());
+    return lhs;
+}
+Phasor& operator*=(Phasor& lhs, const Phasor& rhs){
+    lhs.SetPolar(lhs.Magnitude() * rhs.Magnitude(), lhs.Phase() + rhs.Phase());
+    return lhs;
+}
+Phasor& operator/=(Phasor& lhs, const Phasor& rhs){
+    lhs.SetPolar(lhs.Magnitude() / rhs.Magnitude(), lhs.Phase() - rhs.Phase());
+    return lhs;
+}
+
+Phasor& operator+=(Phasor& lhs, const double rhs){
+    lhs.SetCartesian(lhs.Real() + rhs, lhs.Imag());
+    return lhs;
+}
+Phasor& operator-=(Phasor& lhs, const double rhs){
+    lhs.SetCartesian(lhs.Real() - rhs, lhs.Imag());
+    return lhs;
+}
+Phasor& operator*=(Phasor& lhs, const double rhs){
+    lhs.SetPolar(lhs.Magnitude() * rhs, lhs.Phase());
+    return lhs;
+}
+Phasor& operator/=(Phasor& lhs, const double rhs){
+    lhs.SetPolar(lhs.Magnitude() / rhs, lhs.Phase());
+    return lhs;
+}
+
+std::ostream& operator<<(std::ostream& os, const Phasor& p){
+    return os << std::fixed << p.Abs() << "*e(j*" << p.AngleDeg() << ") " << "[" << p.Real() << " + j*" << p.Imag() << "]";
+}
+
+Phasor MakePhasorCartesian(double re, double im){
+    return Phasor{re, im, AlgTag{}};
+}
+Phasor MakePhasorPolar(double mag, double phase){
+    return Phasor{mag, phase};
+}
+Phasor MakePhasorPolarDeg(double mag, double phase){
+    return Phasor{mag, phase, DegTag{}};
 }
