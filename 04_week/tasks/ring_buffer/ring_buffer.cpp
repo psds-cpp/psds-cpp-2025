@@ -173,7 +173,7 @@ void RingBuffer::Clear() noexcept {
 void RingBuffer::Pop() {
     if (!Empty()) {
         buffer_.erase(buffer_.begin() + ValidIndex(0));
-        head_ = head_ % Size();
+        head_ = Empty() ? 0 : head_ % Size();
     }
 }
 bool RingBuffer::TryPop(int& value) {
