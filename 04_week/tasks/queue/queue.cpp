@@ -57,6 +57,14 @@ void Queue::TransferElements() {
 // Конструктор по умолчанию: создает пустую очередь
 Queue::Queue() = default;
 
+// Конструктор от размера
+Queue::Queue(size_t capacity) {
+    // Все элементы изначально добавляются в input_stack
+    // Поэтому резервируем всю capacity для него
+    input_stack.reserve(capacity);
+    // output_stack может оставаться пустым до первого Pop()
+}
+
 // Конструктор от std::stack<int> 
 Queue::Queue(std::stack<int> s) {
     // Стек: последний добавленный наверху
