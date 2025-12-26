@@ -1,5 +1,6 @@
 #include <cstdint>
 #include <stdexcept>
+#include <iostream>
 
 
 enum class CheckFlags : uint8_t {
@@ -14,5 +15,45 @@ enum class CheckFlags : uint8_t {
 };
 
 void PrintCheckFlags(CheckFlags flags) {
-    throw std::runtime_error{"Not implemented"};
+    if (flags > CheckFlags::ALL) {
+        std::cout << "";
+        return;
+    }
+
+    bool the_first = true;
+    std::string str_flags = "[";
+
+    if (static_cast<int8_t>(flags) &
+        static_cast<int8_t>(CheckFlags::TIME)) {
+        str_flags += "TIME";
+        the_first = false;
+    }
+    if (static_cast<int8_t>(flags) &
+        static_cast<int8_t>(CheckFlags::DATE)) {
+        the_first ? str_flags += "DATE" : str_flags += ",DATE";
+        the_first = false;
+    }
+    if (static_cast<int8_t>(flags) &
+        static_cast<int8_t>(CheckFlags::USER) ) {
+        the_first ? str_flags += "USER" : str_flags += ",USER";
+        the_first = false;
+    }
+    if (static_cast<int8_t>(flags) &
+        static_cast<int8_t>(CheckFlags::CERT)) {
+        the_first ? str_flags += "CERT" : str_flags += ",CERT";
+        the_first = false;
+    }
+    if (static_cast<int8_t>(flags) &
+        static_cast<int8_t>(CheckFlags::KEYS)) {
+        the_first ? str_flags += "KEYS" : str_flags += ",KEYS";
+        the_first = false;
+    }
+    if (static_cast<int8_t>(flags) &
+        static_cast<int8_t>(CheckFlags::DEST)) {
+        the_first ? str_flags += "DEST" : str_flags += ",DEST";
+        the_first = false;
+    }
+
+    str_flags += "]";
+    std::cout << str_flags;
 }
