@@ -24,8 +24,8 @@ public:
     bool operator!=(const Queue& rhs) const;
 
 private:
-    std::vector<int> in;
-    std::vector<int> out;
+    std::vector<int> in_;
+    std::vector<int> out_;
 };
 
 
