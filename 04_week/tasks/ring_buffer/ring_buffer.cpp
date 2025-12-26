@@ -121,6 +121,8 @@ class RingBuffer {
             new_data.resize(new_size);
             size_t new_counter = 0;
             size_t start_pos = 0;
+
+            // Copying
             if (new_size > size_) {
                 start_pos = oldest_;
             }
@@ -137,6 +139,8 @@ class RingBuffer {
                 new_data[new_counter] = data_[i];
                 ++new_counter;
             }
+
+            // Other data
             if (new_size > size_) {
                 pos_for_next_ = new_counter;
             }
@@ -144,11 +148,9 @@ class RingBuffer {
                 pos_for_next_ = 0;
                 oldest_ = 0;
             }
-
             size_ = new_size;
             data_ = new_data;
             counter_ = new_counter;
-            
         }
 
     protected:
