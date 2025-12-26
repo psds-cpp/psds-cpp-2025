@@ -4,10 +4,12 @@
 
 class RingBuffer {
 public:
+    // Конструкторы (объявления)
     RingBuffer(size_t n);
     RingBuffer(size_t n, int val);
     RingBuffer(std::initializer_list<int> list);
 
+    // Методы (объявления)
     bool Empty() const; 
     bool Full() const;  
     size_t Size() const;
@@ -24,6 +26,7 @@ public:
     void Resize(size_t n);
     std::vector<int> Vector() const;
 
+    // Операторы (объявсления)
     int& operator[](size_t ind);
     const int& operator[](size_t ind) const;
 
@@ -33,7 +36,7 @@ private:
     size_t curSize = 0;
 };
 
-// Конструкторы
+// Конструкторы (реализации)
 
 RingBuffer::RingBuffer(size_t n) : buf(std::max<size_t>(1, n)), begin(0), curSize(0) {}
 
@@ -47,7 +50,7 @@ RingBuffer::RingBuffer(std::initializer_list<int> list) : buf(list), begin(0), c
         buf.resize(1);
 }
 
-// Методы
+// Методы (реализации)
 
 size_t RingBuffer::Size() const {
     return curSize;
@@ -100,6 +103,7 @@ bool RingBuffer::TryPop(int& val) {
 int& RingBuffer::Front() {
     return buf[(begin + curSize - 1) % buf.size()];
 }
+
 const int& RingBuffer::Front() const {
     return buf[(begin + curSize - 1) % buf.size()];
 }
@@ -107,6 +111,7 @@ const int& RingBuffer::Front() const {
 int& RingBuffer::Back() {
     return buf[begin];
 }
+
 const int& RingBuffer::Back() const {
     return buf[begin];
 }
@@ -140,6 +145,8 @@ std::vector<int> RingBuffer::Vector() const {
 
     return res;
 }
+
+// Операторы (реализации)
 
 int& RingBuffer::operator[](size_t ind) {
     return buf[(begin + ind) % buf.size()];
