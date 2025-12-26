@@ -149,3 +149,46 @@ int& RingBuffer::Back() {
 const int& RingBuffer::Back() const {
     return buf[prevElem];
 }
+
+
+
+
+
+
+void RingBuffer::Resize(size_t newCapacity) {
+    newCapacity = newCapacity ? newCapacity : 1;
+    if (newCapacity == buf.capacity()) return;
+    
+    size_t newCount = countElem < newCapacity ? countElem : newCapacity;
+    std::vector<int> newBuffer = {};
+    newBuffer.reserve(newCapacity);
+    newBuffer.resize(newCapacity);
+    
+    for (size_t i = 0; i < newCount; ++i) {
+        newBuffer[i] = (*this)[countElem - newCount + i];
+    }
+    
+    buf = std::move(newBuffer);
+    prevElem = 0;
+    nextElem = newCount % newCapacity;
+    countElem = newCount;
+}
+
+std::vector<int> RingBuffer::Vector() const {
+    std::vector<int> result;
+    result.reserve(countElem);
+    for (size_t i = 0; i < countElem; ++i) result.push_back((*this)[i]);
+    return result;
+}
+
+bool RingBuffer::operator==(const RingBuffer& other) const {
+    if (countElem != other.countElem || buf.capacity() != other.buf.capacity())
+        return false;
+    for (size_t i = 0; i < countElem; ++i)
+        if ((*this)[i] != other[i]) return false;
+    return true;
+}
+
+bool RingBuffer::operator!=(const RingBuffer& other) const {
+    return !(*this == other);
+}
