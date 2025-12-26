@@ -112,23 +112,17 @@ const int& Queue::Front() const {
 }
 
 int& Queue::Back() {
-    if (!inputDat.empty()) {
-        return inputDat.back();
-    }
-    if (!outputDat.empty()) {
-        return outputDat.front();
-    }
+    if (!inputDat.empty()) return inputDat.back();
+    if (!outputDat.empty()) return outputDat.front();
+
     static int returnZero = 0;
     return returnZero;
 }
 
 const int& Queue::Back() const {
-    if (!inputDat.empty()) {
-        return inputDat.back();
-    }
-    if (!outputDat.empty()) {
-        return outputDat.front();
-    }
+    if (!inputDat.empty()) return inputDat.back();
+    if (!outputDat.empty()) return outputDat.front();
+
     static int returnZero = 0;
     return returnZero;
 }
@@ -187,21 +181,3 @@ bool Queue::operator==(const Queue& otherQueue) const {
 bool Queue::operator!=(const Queue& otherQueue) const {
     return !(*this == otherQueue);
 }
-//////////Долгострой питерский////////////////////////////////////
-// bool Queue::operator==(const Queue& otherQueue) const {
-//     if (Size() != otherQueue.Size()) return false;
-
-//     Queue temp1 = *this;
-//     Queue temp2 = otherQueue;
-    
-//     temp1.MoveInputToOutput();
-//     temp2.MoveInputToOutput();
-    
-//     if (temp1.outputDat.size() != temp2.outputDat.size()) return false;
-    
-//     for (size_t i = 0; i < temp1.outputDat.size(); ++i) {
-//         if (temp1.outputDat[i] != temp2.outputDat[i]) return false;
-//     }
-//     return true;
-// }
-////////////////////////////////////////////////////////////////////
