@@ -26,6 +26,8 @@ public:
     double AngleDeg() const;
     double Real() const;
     double Imag() const;
+    Phasor Conj() const;
+    Phasor Inv() const;
 
     // Операторы (объявления)
     Phasor operator-() const;
@@ -37,17 +39,13 @@ public:
     Phasor& operator-=(double val);
     Phasor& operator*=(double val);
     Phasor& operator/=(double val);
-
-    Phasor Conj() const;
-    Phasor Inv() const;
-
-    friend bool operator==(const Phasor& a, const Phasor& b);
-    friend bool operator!=(const Phasor& a, const Phasor& b);
+    bool operator==(const Phasor& other) const;
+    bool operator!=(const Phasor& other) const;
+ 
 
 private:
     double re;
     double im;
-
     static constexpr double PI = 3.14159265358979323846;
 };
 
@@ -71,7 +69,7 @@ Phasor MakePhasorCartesian(double re, double im);
 Phasor MakePhasorPolar(double amplitude, double phase);
 Phasor MakePhasorPolarDeg(double amplitude, double phase);
 
-// Вывод (объявление)
+// // Вывод в поток (объявление)
 std::ostream& operator<<(std::ostream& os, const Phasor& p);
 
 
@@ -90,6 +88,7 @@ Phasor::Phasor(double amplitude, double phase, DegTag) {
 }
 
 Phasor::Phasor(double real, double imag, AlgTag) : re(real), im(imag) {}
+
 
 // Методы (реализации)
 
@@ -134,6 +133,15 @@ double Phasor::Real() const {
 
 double Phasor::Imag() const {
     return im;
+}
+
+Phasor Phasor::Conj() const {
+    return Phasor(re, -im, AlgTag());
+}
+
+Phasor Phasor::Inv() const {
+    double denom = re * re + im * im;
+    return Phasor(re / denom, -im / denom, AlgTag());
 }
 
 
@@ -192,42 +200,64 @@ Phasor& Phasor::operator/=(double val) {
     return *this;
 }
 
-Phasor Phasor::Conj() const {
-    return Phasor(re, -im, AlgTag());
+bool Phasor::operator==(const Phasor& other) const {
+    return this->re == other.re && this->im == other.im;
 }
 
-Phasor Phasor::Inv() const {
-    double denom = re * re + im * im;
-    return Phasor(re / denom, -im / denom, AlgTag());
+bool Phasor::operator!=(const Phasor& other) const {
+    return !(*this == other);
 }
 
-
-bool operator==(const Phasor& a, const Phasor& b) {
-    return a.re == b.re && a.im == b.im;
-}
-
-bool operator!=(const Phasor& a, const Phasor& b) {
-    return !(a == b);
-}
 
 // Арифметические операторы (реализации)
 
-Phasor operator+(Phasor a, const Phasor& b) { return a += b; }
-Phasor operator-(Phasor a, const Phasor& b) { return a -= b; }
-Phasor operator*(Phasor a, const Phasor& b) { return a *= b; }
-Phasor operator/(Phasor a, const Phasor& b) { return a /= b; }
+Phasor operator+(Phasor a, const Phasor& b) {
+    return a += b;
+}
 
-Phasor operator+(Phasor a, double b) { return a += b; }
-Phasor operator+(double a, const Phasor& b) { return Phasor(a, 0, AlgTag()) + b; }
+Phasor operator-(Phasor a, const Phasor& b) {
+    return a -= b;
+}
 
-Phasor operator-(Phasor a, double b) { return a -= b; }
-Phasor operator-(double a, const Phasor& b) { return Phasor(a, 0, AlgTag()) - b; }
+Phasor operator*(Phasor a, const Phasor& b) {
+    return a *= b;
+}
 
-Phasor operator*(Phasor a, double b) { return a *= b; }
-Phasor operator*(double a, const Phasor& b) { return Phasor(a, 0, AlgTag()) * b; }
+Phasor operator/(Phasor a, const Phasor& b) {
+    return a /= b;
+}
 
-Phasor operator/(Phasor a, double b) { return a /= b; }
-Phasor operator/(double a, const Phasor& b) { return Phasor(a, 0, AlgTag()) / b; }
+Phasor operator+(Phasor a, double b) {
+    return a += b;
+}
+
+Phasor operator+(double a, const Phasor& b) {
+    return Phasor(a, 0, AlgTag()) + b;
+}
+
+Phasor operator-(Phasor a, double b) {
+    return a -= b;
+}
+
+Phasor operator-(double a, const Phasor& b) {
+    return Phasor(a, 0, AlgTag()) - b;
+}
+
+Phasor operator*(Phasor a, double b) {
+    return a *= b;
+}
+
+Phasor operator*(double a, const Phasor& b) {
+    return Phasor(a, 0, AlgTag()) * b;
+}
+
+Phasor operator/(Phasor a, double b) {
+    return a /= b;
+}
+
+Phasor operator/(double a, const Phasor& b) {
+    return Phasor(a, 0, AlgTag()) / b;
+}
 
 
 // Методы создания (реализация)
@@ -243,6 +273,7 @@ Phasor MakePhasorPolar(double amplitude, double phase) {
 Phasor MakePhasorPolarDeg(double amplitude, double phase) {
     return Phasor(amplitude, phase, DegTag());
 }
+
 
 // Вывод в поток (реализация)
 
