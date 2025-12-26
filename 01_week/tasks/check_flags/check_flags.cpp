@@ -1,5 +1,6 @@
 #include <cstdint>
 #include <stdexcept>
+#include <bits/stdc++.h>
 
 
 enum class CheckFlags : uint8_t {
@@ -14,5 +15,35 @@ enum class CheckFlags : uint8_t {
 };
 
 void PrintCheckFlags(CheckFlags flags) {
-    throw std::runtime_error{"Not implemented"};
+    uint8_t value = static_cast<uint8_t>(flags);
+
+    if (value == static_cast<uint8_t>(CheckFlags::NONE)) {
+        std::cout << "[]";
+        return;
+    }
+    else if (value >= 1 << 6) {
+        std::cout << "";
+        return;
+    }
+
+    std::cout << "[";
+
+    bool first = true;
+    auto try_print = [&](CheckFlags f, const char* name) {
+        if (value & static_cast<uint8_t>(f)) {
+            if (!first)
+                std::cout << ",";
+            std::cout << name;
+            first = false;
+        }
+    };
+
+    try_print(CheckFlags::TIME, "TIME");
+    try_print(CheckFlags::DATE, "DATE");
+    try_print(CheckFlags::USER, "USER");
+    try_print(CheckFlags::CERT, "CERT");
+    try_print(CheckFlags::KEYS, "KEYS");
+    try_print(CheckFlags::DEST, "DEST");
+
+    std::cout << "]";
 }
