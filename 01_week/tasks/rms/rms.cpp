@@ -10,5 +10,5 @@ double CalculateRMS(double values[], size_t size) {
     }
 
     // size неявно преобразуется к double
-    return sqrt(result / size);
+    return std::sqrt(result / size);
 }
