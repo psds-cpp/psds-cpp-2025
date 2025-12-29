@@ -1,7 +1,7 @@
 #include <cstddef>
 
 
-double ApplyOperations(const double a, const double b, double (*func_arr[])(double, double), const size_t size) {
+double ApplyOperations(double a, double b, double (*func_arr[])(double, double), size_t size) {
     if (size == 0) return 0;
 
     double result = 0;
