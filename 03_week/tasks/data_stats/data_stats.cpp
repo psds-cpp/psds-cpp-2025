@@ -21,7 +21,7 @@ DataStats CalculateDataStats(const std::vector<int>& arr) {
 
     // По суммам считаем среднее и sd
     data_stats.avg /= arr.size();
-    data_stats.sd = sqrt(data_stats.sd / arr.size() - std::pow(data_stats.avg, 2));
+    data_stats.sd = std::sqrt(data_stats.sd / arr.size() - std::pow(data_stats.avg, 2));
 
     return data_stats;
 }
