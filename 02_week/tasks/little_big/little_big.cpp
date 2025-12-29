@@ -1,39 +1,24 @@
 #include <iostream>
 #include <iomanip>
 
-
-void PrintMemory(int num, bool is_little_endian = false) {
-    const u_char* begin = reinterpret_cast<u_char*>(&num);
-    const u_char* end = reinterpret_cast<u_char*>(&num) + sizeof(num);
+void PrintMemory(const u_char* begin, size_t size, bool is_little_endian) {
+    const u_char* end = begin + size;
 
     std::cout << "0x" << std::hex << std::uppercase;
-    if (is_little_endian) {
-        for (const u_char* ptr = end - 1; ptr >= begin; --ptr) {
+        for (
+            const u_char* ptr = is_little_endian ? end - 1 : begin;
+            is_little_endian ? ptr >= begin : ptr < end;
+            is_little_endian ? --ptr : ++ptr
+        ) {
             std::cout << std::setfill('0') << std::setw(2) << static_cast<int>(*ptr);
         }
-    }
-    else {
-        for (const u_char* ptr = begin; ptr < end; ++ptr) {
-            std::cout << std::setfill('0') << std::setw(2) << static_cast<int>(*ptr);
-        }
-    }
     std::cout << std::endl;
 }
 
-void PrintMemory(double num, bool is_little_endian = false) {
-    const u_char* begin = reinterpret_cast<u_char*>(&num);
-    const u_char* end = reinterpret_cast<u_char*>(&num) + sizeof(num);
+void PrintMemory(int num, bool is_little_endian = false) {
+    PrintMemory(reinterpret_cast<u_char*>(&num), sizeof(num), is_little_endian);
+}
 
-    std::cout << "0x" << std::hex << std::uppercase;
-    if (is_little_endian) {
-        for (const u_char* ptr = end - 1; ptr >= begin; --ptr) {
-            std::cout << std::setfill('0') << std::setw(2) << static_cast<int>(*ptr);
-        }
-    }
-    else {
-        for (const u_char* ptr = begin; ptr < end; ++ptr) {
-            std::cout << std::setfill('0') << std::setw(2) << static_cast<int>(*ptr);
-        }
-    }
-    std::cout << std::endl;
+void PrintMemory(double num, bool is_little_endian = false) {
+    PrintMemory(reinterpret_cast<u_char*>(&num), sizeof(num), is_little_endian);
 }
