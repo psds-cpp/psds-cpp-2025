@@ -1,7 +1,8 @@
 #include <vector>
 
+typedef std::pair<std::vector<int>::const_iterator, std::vector<int>::const_iterator> MinMaxIter;
 
-std::pair<std::vector<int>::const_iterator, std::vector<int>::const_iterator> MinMax(const std::vector<int>& arr) {
+MinMaxIter MinMax(const std::vector<int>& arr) {
     auto first = arr.begin(), last = arr.end();
 
     if (first == last)
@@ -12,26 +13,16 @@ std::pair<std::vector<int>::const_iterator, std::vector<int>::const_iterator> Mi
     while (++first != last) {
         auto i = first;
         if (++first == last) {
-            if (*i < *min)
-                min = i;
-            else if (*i >= *max)
-                max = i;
+            min = (*i < *min) ? i : min;
+            max = (*i >= *max) ? i : max;
             break;
         }
-        else {
-            if (*first < *i) {
-                if (*first < *min)
-                    min = first;
-                if (*i >= *max)
-                    max = i;
-            }
-            else {
-                if (*i < *min)
-                    min = i;
-                if (*first >= *max)
-                    max = first;
-            }
-        }
+
+        auto smaller = (*first < *i) ? first : i;
+        auto larger = (*first < *i) ? i : first;
+
+        min = (*smaller < *min) ? smaller : min;
+        max = (*larger >= *max) ? larger : max;
     }
 
     return {min, max};

@@ -3,7 +3,6 @@
 #include <utility>
 #include <iostream>
 
-
 enum class CheckFlags : uint8_t {
     NONE = 0,
     TIME = (1 << 0),
