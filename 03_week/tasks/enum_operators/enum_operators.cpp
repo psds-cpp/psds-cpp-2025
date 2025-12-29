@@ -1,4 +1,3 @@
-#include <vector>
 #include <cstdint>
 #include <iostream>
 #include <utility>
@@ -54,66 +53,37 @@ CheckFlags operator~(CheckFlags flags) {
     return static_cast<CheckFlags>(flags_cleared);
 }
 
-std::string GetFlagName(CheckFlags flags, CheckFlags check) {
-    uint8_t flags_int = static_cast<int>(flags);
-    uint8_t check_int = static_cast<int>(check);
-    CheckFlags single_flag = static_cast<CheckFlags>(flags_int & check_int);
-
-    if (single_flag & CheckFlags::TIME) {
-        return "TIME";
-    }
-    else if (single_flag & CheckFlags::DATE) {
-        return "DATE";
-    }
-    else if (single_flag & CheckFlags::USER) {
-        return "USER";
-    }
-    else if (single_flag & CheckFlags::CERT) {
-        return "CERT";
-    }
-    else if (single_flag & CheckFlags::KEYS) {
-        return "KEYS";
-    }
-    else if (single_flag & CheckFlags::DEST) {
-        return "DEST";
-    }
-    else if (single_flag & CheckFlags::NONE) {
-        return "NONE";
-    }
-    else {
-        return "";
-    }
-}
-
 std::ostream& operator<<(std::ostream& os, CheckFlags flags) {
-    std::vector<CheckFlags> checks{
-        CheckFlags::TIME, 
-        CheckFlags::DATE,
-        CheckFlags::USER,
-        CheckFlags::CERT,
-        CheckFlags::KEYS,
-        CheckFlags::DEST,
+    const static std::pair<CheckFlags, std::string> checks[] {
+        {CheckFlags::TIME, "TIME"},
+        {CheckFlags::DATE, "DATE"},
+        {CheckFlags::USER, "USER"},
+        {CheckFlags::CERT, "CERT"},
+        {CheckFlags::KEYS, "KEYS"},
+        {CheckFlags::DEST, "DEST"}
     };
 
-    std::vector<std::string> flags_names{};
-    flags_names.reserve(checks.size());
+    bool empty = true;
+    bool first = true;
 
-    for (size_t i = 0; i < checks.size(); ++i) {
-        if (flags & checks[i]) {
-            flags_names.push_back(GetFlagName(flags, checks[i]));
+    for (const auto& [flag, name] : checks) {
+        uint8_t flags_int = static_cast<int>(flags);
+        uint8_t check_int = static_cast<int>(flag);
+        CheckFlags single_flag = static_cast<CheckFlags>(flags_int & check_int);
+        if (single_flag != CheckFlags::NONE) {
+            if (first) {
+                first = false;
+            }
+            else {
+                os << ", ";
+            }
+            os << name;
+            empty = false;
         }
     }
 
-    if (flags_names.empty()) {
+    if (empty) {
         os << "NONE";
-        return os;
-    }
-
-    for (size_t i = 0, flags_size = flags_names.size(); i < flags_size; ++i) {
-        os << flags_names[i];
-        if (i != flags_size - 1) {
-            os << ", ";
-        }
     }
 
     return os;
