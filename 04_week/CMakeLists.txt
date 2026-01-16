@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.14) # Минимальная требуемая версия CMake
 project(04_week) # Необходим для инициализации cmake
 
+
 set(CMAKE_CXX_STANDARD 20) # Версия стандарта C++
 set(CMAKE_CXX_STANDARD_REQUIRED ON) # Гарантирует использование указанной версии стандарта
 
