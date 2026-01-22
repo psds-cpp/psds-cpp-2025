@@ -1,5 +1,7 @@
 #include <stdexcept>
 #include <vector>
+#include <cstdint>
+#include <iostream>
 
 enum class CheckFlags : uint8_t {
     NONE = 0,
@@ -12,22 +14,56 @@ enum class CheckFlags : uint8_t {
     ALL = TIME | DATE | USER | CERT | KEYS | DEST
 };
 
-/* return_type */ operator|(/* args */) {
-    throw std::runtime_error{"Not implemented"};
+CheckFlags operator|(const CheckFlags& lhs, const CheckFlags& rhs) {
+    return static_cast<CheckFlags>(
+        (static_cast<uint8_t>(lhs) | static_cast<uint8_t>(rhs)) & 0x3F // Оставим только шесть бит
+    );
 }
 
-/* return_type */ operator&(/* args */) {
-    throw std::runtime_error{"Not implemented"};
+bool operator&(const CheckFlags& lhs, const CheckFlags& rhs) {
+    uint8_t lhs_int = static_cast<uint8_t>(lhs) & 0x3F;
+    uint8_t rhs_int = static_cast<uint8_t>(rhs) & 0x3F;
+    if (lhs_int == 0u || rhs_int == 0u) return false;
+    return ((lhs_int & rhs_int) == lhs_int || (lhs_int & rhs_int) == rhs_int);
 }
 
-/* return_type */ operator^(/* args */) {
-    throw std::runtime_error{"Not implemented"};
+CheckFlags operator^(const CheckFlags& lhs, const CheckFlags& rhs) {
+    return static_cast<CheckFlags>(
+        (static_cast<uint8_t>(lhs) ^ static_cast<uint8_t>(rhs)) & 0x3F // Оставим только шесть бит
+    );
 }
 
-/* return_type */ operator~(/* args */) {
-    throw std::runtime_error{"Not implemented"};
+CheckFlags operator~(const CheckFlags& flags) {
+    return static_cast<CheckFlags>(
+        (~static_cast<uint8_t>(flags)) & 0x3F
+    );
 }
 
-/* return_type */ operator<<(/* args */) {
-    throw std::runtime_error{"Not implemented"};
+std::ostream& operator<<(std::ostream& os, CheckFlags flags) {
+    flags = static_cast<CheckFlags>(static_cast<uint8_t>(flags) & 0x3F);
+    if (flags == CheckFlags::NONE) {
+        os << "NONE";
+        return os;
+    }
+    
+    
+    const std::pair<CheckFlags, std::string> flag_infos[] = {
+        {CheckFlags::TIME, "TIME"},
+        {CheckFlags::DATE, "DATE"},
+        {CheckFlags::USER, "USER"},
+        {CheckFlags::CERT, "CERT"},
+        {CheckFlags::KEYS, "KEYS"},
+        {CheckFlags::DEST, "DEST"}
+    };
+    
+    bool isFirst = true;
+    for (const auto& info : flag_infos) {
+        if (static_cast<uint8_t>(flags & info.first) != 0) {
+            if (!isFirst) os << ", ";
+            os << info.second;
+            isFirst = false;
+        }
+    }
+    
+    return os;
 }

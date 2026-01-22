@@ -1,7 +1,20 @@
 #include <cstddef>
 #include <stdexcept>
+#include <iostream>
 
 
 void PrintBits(long long value, size_t bytes) {
-    throw std::runtime_error{"Not implemented"};
+    std::string result = "0b";
+    size_t total_bits = bytes * 8;
+    long long mask = 0LL;
+    // Тут надо int, иначе условие бесконечное, потому что будет
+    // происходит переполнение счетчика
+    for (int i = total_bits - 1; i >= 0; --i) {
+        mask = 1LL << i;
+    
+        result += (value & mask) ? '1' : '0';
+
+        if (i % 4 == 0 && i != 0) result += '\'';
+    }
+    std::cout << result << "\n";
 }
