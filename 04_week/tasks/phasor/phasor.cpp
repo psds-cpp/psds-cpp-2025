@@ -19,17 +19,17 @@ class Phasor {
         }
 
         Phasor(double ampl, double angle, ExpTag tag){
-            (void)tag;
+            static_cast<void>(tag);
             SetPolar(ampl, angle);
         }
 
         Phasor(double ampl, double angleDeg, DegTag tag){
-            (void)tag;
+            static_cast<void>(tag);
             SetPolar(ampl, angleDeg * M_PI / 180);
         }
 
         Phasor(double real, double imag, AlgTag tag){
-            (void)tag;
+            static_cast<void>(tag);
             SetCartesian(real, imag);
         }
 
@@ -161,8 +161,10 @@ Phasor& operator-=(Phasor& lhs, const Phasor& rhs) {
 }
 
 Phasor& operator*=(Phasor& lhs, const Phasor& rhs) {
-    lhs.SetCartesian(lhs.Real() * rhs.Real() - lhs.Imag() * rhs.Imag(),
-                        lhs.Real() * rhs.Imag() + lhs.Imag() * rhs.Real());
+    lhs.SetCartesian(
+        lhs.Real() * rhs.Real() - lhs.Imag() * rhs.Imag(),
+        lhs.Real() * rhs.Imag() + lhs.Imag() * rhs.Real()
+    );
     return lhs;
 }
 

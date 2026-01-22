@@ -33,7 +33,7 @@ class Stack {
             data_.clear();
         }
         void Swap(Stack& other){
-            std::swap(this->data_, other.data_);
+            std::swap(data_, other.data_);
         }
 
         bool operator==(const Stack& other) const{
@@ -49,7 +49,7 @@ class Stack {
             return true;
         }
         bool operator!=(const Stack& other) const{
-            return ! (*this==other);
+            return !(*this==other);
         }
     
     private:

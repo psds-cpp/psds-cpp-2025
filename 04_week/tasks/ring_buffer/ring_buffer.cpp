@@ -12,11 +12,9 @@ class RingBuffer {
             oldest_ = 0;
         }
         RingBuffer(size_t size, int init_val) : RingBuffer(size) {
-            for (std::vector<int>::iterator iter = data_.begin(); iter!=data_.end(); ++iter){
-                *iter = init_val;
-            }
             pos_for_next_ = 0;
             counter_ = size > 0 ? size : 1;
+            data_.assign(counter_, init_val);
         }
         RingBuffer(std::initializer_list<int> initList) : RingBuffer(initList.size()) {
             data_.assign(initList.begin(), initList.end());

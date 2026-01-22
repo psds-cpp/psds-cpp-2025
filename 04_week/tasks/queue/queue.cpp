@@ -10,28 +10,17 @@ class Queue {
         Queue(int size){
             in_.reserve(size);
         }
-        Queue(std::vector<int> vector){
-            in_ = vector;
-        }
+        Queue(std::vector<int> vector) : in_(vector) {}
         Queue(std::stack<int> stack){
-            in_.reserve(stack.size());
-
-            std::vector<int> temp;
+            out_.reserve(stack.size());
             while (!stack.empty()) {
-                temp.push_back(stack.top());
+                out_.push_back(stack.top());
                 stack.pop();
             }
-            
-            std::reverse(temp.begin(), temp.end());
-            in_ = temp;
-
         }
 
         Queue(std::initializer_list<int> initList) {
-            in_.reserve(initList.size());
-            for (int val : initList) {
-                in_.push_back(val);
-            }
+            in_ = initList;
         }
 
         void Push(int in_num){
@@ -56,14 +45,11 @@ class Queue {
         void Clear(){
             in_.clear();
             out_.clear();
-            in_.shrink_to_fit();
-            out_.shrink_to_fit();
         }
 
         void Swap(Queue& other){
             std::swap(in_, other.in_);
             std::swap(out_, other.out_);
-
         }
 
         int& Front(){
@@ -85,14 +71,7 @@ class Queue {
                 return out_.front();
             }
             
-            if (!in_.empty()) {
-                // Если есть что-то в первом списке
-                return in_.back();
-            } 
-            else {
-                // Если есть нет, то с конца последнего
-                return out_.front();
-            }
+            return !in_.empty() ? in_.back() : out_.front();
         }
 
         const int& Front() const {
@@ -149,12 +128,12 @@ class Queue {
         }
 
         bool operator!=(const Queue& other) const{
-            return ! (*this == other);
+            return !(*this == other);
         }
 
-    protected:
-        std:: vector <int> in_{};
-        std:: vector <int> out_{}; 
+    private:
+        std::vector<int> in_{};
+        std::vector<int> out_{};
 
         void In_to_out(){
             if (in_.empty()) {
@@ -173,7 +152,6 @@ class Queue {
 
             out_.swap(new_out);
             in_.clear();
-            in_.shrink_to_fit();
         }
 };
 
