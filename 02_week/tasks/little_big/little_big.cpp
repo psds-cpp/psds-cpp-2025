@@ -3,7 +3,7 @@
 #include <iomanip>
 #include <sstream>
 
-void PrintingFunc(unsigned char* byte_ptr, size_t bytes, bool shouldInverse){
+void Print(unsigned char* byte_ptr, size_t bytes, bool shouldInverse){
     std::ostringstream oss;
     oss << "0x";
     
@@ -19,10 +19,10 @@ void PrintingFunc(unsigned char* byte_ptr, size_t bytes, bool shouldInverse){
 
 void PrintMemory(int number, bool shouldInverse=false) {
     unsigned char* byte_ptr = reinterpret_cast<unsigned char*>(&number);
-    PrintingFunc(byte_ptr, 4, shouldInverse);
+    Print(byte_ptr, sizeof(int), shouldInverse);
 }
 
 void PrintMemory(double number, bool shouldInverse=false) {
     unsigned  char* byte_ptr = reinterpret_cast<unsigned  char*>(&number);
-    PrintingFunc(byte_ptr, 8, shouldInverse);
+    Print(byte_ptr, sizeof(double), shouldInverse);
 }
