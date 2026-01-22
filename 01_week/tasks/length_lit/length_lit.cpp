@@ -1,3 +1,9 @@
+namespace{
+    constexpr double FT_IN_M = 3.280839895;
+    constexpr double IN_IN_FT = 12.0;
+    constexpr double IN_IN_M = IN_IN_FT * FT_IN_M;
+}
+
 constexpr double operator""_m_to_cm(long double meters){
     return meters * 100;
 }
@@ -7,7 +13,7 @@ constexpr double operator""_cm_to_m(long double centimeter){
 }
 
 constexpr double operator""_ft_to_m(long double feets){
-    return feets * 0.3048;
+    return feets / FT_IN_M;
 }
 
 constexpr double operator""_ft_to_cm(long double feets){
@@ -15,11 +21,11 @@ constexpr double operator""_ft_to_cm(long double feets){
 }
 
 constexpr double operator""_ft_to_in(long double feets){
-    return feets * 12.0;
+    return feets * IN_IN_FT;
 }
 
 constexpr double operator""_in_to_m(long double inches){
-    return inches * 0.0254;
+    return inches / IN_IN_M;
 }
 
 constexpr double operator""_in_to_cm(long double inches){
@@ -27,15 +33,15 @@ constexpr double operator""_in_to_cm(long double inches){
 }
 
 constexpr double operator""_in_to_ft(long double inches){
-    return inches / 12.0;
+    return inches / IN_IN_FT;
 }
 
 constexpr double operator""_m_to_ft(long double meters){
-    return meters * 3.280839895;
+    return meters * FT_IN_M;
 }
 
 constexpr double operator""_m_to_in(long double meters){
-    return meters * 39.37007874;
+    return meters * IN_IN_M;
 }
 
 constexpr double operator""_cm_to_ft(long double centimeters){

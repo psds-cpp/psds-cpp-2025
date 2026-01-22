@@ -12,8 +12,7 @@ void PrintBits(long long value, size_t bytes) {
     for (int i = total_bits - 1; i >= 0; --i) {
         mask = 1LL << i;
     
-        if (value & mask) result += '1';
-        else result += '0';
+        result += (value & mask) ? '1' : '0';
 
         if (i % 4 == 0 && i != 0) result += '\'';
     }

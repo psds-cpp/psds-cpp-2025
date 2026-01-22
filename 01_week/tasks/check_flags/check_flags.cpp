@@ -14,7 +14,6 @@ enum class CheckFlags : uint8_t {
 };
 
 void PrintCheckFlags(CheckFlags flags) {
-
     uint8_t flags_int = static_cast<uint8_t>(flags);
     if (flags_int > static_cast<uint8_t>(CheckFlags::ALL)) {
         std::cout << "";

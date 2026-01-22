@@ -3,10 +3,8 @@
 #include <iomanip>
 #include <iostream>
 
-bool isLevelLine(int a, int b){
-    if (a == 0 && b == 0) return true;
-    else return false;
-
+bool isLevelLine(int a, int b) {
+    return a == 0 && b == 0;
 }
 
 bool isLinear(int a, int b){
@@ -35,8 +33,7 @@ std::string AddRootToStr(double x){
 void SolveQuadratic(int a, int b, int c) {
     std::string result = "";
     if (isLevelLine(a, b)){
-        if (c == 0) result = "infinite solutions";
-        else result = "no solutions";
+        result = (c == 0) ? "infinite solutions" : "no solutions";
     }
     else if (isLinear(a, b)){
         double x = -static_cast<double>(c) / b;
