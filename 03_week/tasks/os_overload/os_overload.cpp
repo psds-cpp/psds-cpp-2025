@@ -16,15 +16,12 @@ struct Circle {
 using CircleRegion = std::pair<Circle, bool>;
 using CircleRegionList = std::vector<CircleRegion>;
 
-
 std::ostream& operator<<(std::ostream& os, const Coord2D& coord) {
     os << '(' << coord.x << ", " << coord.y << ')'; 
-    
     return os;
 }
 
 std::ostream& operator<<(std::ostream& os, const Circle& c) {
-
     if (c.radius == 0) {
         os << "circle[]";
         return os;
@@ -36,15 +33,7 @@ std::ostream& operator<<(std::ostream& os, const Circle& c) {
 }
 
 std::ostream& operator<<(std::ostream& os, const CircleRegion& r) {
-    if (r.second == true) {
-        os << '+';
-    } else {
-        os << '-';
-    }
-    
-    os << r.first;
-
-    return os;
+    return os << (r.second == true ? '+' : '-') << r.first;
 }
 
 std::ostream& operator<<(std::ostream& os, const CircleRegionList& lst) {
@@ -62,12 +51,12 @@ std::ostream& operator<<(std::ostream& os, const CircleRegionList& lst) {
             os << ',';
         }
         
-        os << std::endl << '\t' << val;
+        os << "\n\t" << val;
         
         first = false;
     }
 
-    os << std::endl <<"}";
+    os << "\n}";
 
     return os;
 }

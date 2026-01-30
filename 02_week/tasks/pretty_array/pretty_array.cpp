@@ -1,10 +1,9 @@
 #include <iostream>
-#include <stdexcept>
 #include <string>
 
 
 void PrintArray(const int* begin, const int* end, int constrainer = 0) {
-    if (begin == nullptr || end == nullptr) {
+    if (!begin || !end) {
         std::cout << "[]" << std::endl;
         return;
     }
@@ -28,7 +27,7 @@ void PrintArray(const int* begin, const int* end, int constrainer = 0) {
         }
             
         output.append(std::to_string(arr[i]));
-        charCntr++;
+        ++charCntr;
     }
 
     output += "]";

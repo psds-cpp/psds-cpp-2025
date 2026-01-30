@@ -1,9 +1,8 @@
 #include <cstddef>
-#include <stdexcept>
 #include <cmath>
 
 double CalculateRMS(double values[], size_t size) {
-    if (size == 0 || values == NULL) {
+    if (size == 0 || !values) {
         return 0.0;
     }
 

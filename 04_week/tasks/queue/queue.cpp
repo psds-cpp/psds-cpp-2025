@@ -14,21 +14,21 @@ public:
         }
     };
     
-    Queue(std::vector<int> v) : outputV_(v.rbegin(), v.rend()){};
+    Queue(std::vector<int>& v) : outputV_(v.rbegin(), v.rend()){};
 
     Queue(std::initializer_list<int> list) : inputV_(list) {};
 
-    Queue(const size_t size) {
+    Queue(size_t size) {
         inputV_.reserve(size);
         outputV_.reserve(size);
     };
     
-    Queue(const int size) {
-        inputV_.reserve(size);
-        outputV_.reserve(size);
-    };
+    // Queue(const int size) {
+    //     inputV_.reserve(size);
+    //     outputV_.reserve(size);
+    // };
         
-    inline void Push(int val);
+    void Push(int val);
     bool Pop();
     int& Front();
     const int& Front() const;
@@ -44,7 +44,7 @@ public:
             return false;
         }
 
-        return this->GetQueueAsVector() == other.GetQueueAsVector();
+        return GetQueueAsVector() == other.GetQueueAsVector();
     }
 
     bool operator!=(const Queue& other) const {
@@ -67,15 +67,15 @@ void Queue::CopyIfOutEmpty() {
 
 std::vector<int> Queue::GetQueueAsVector() const {
     std::vector<int> result;
+    result.reserve(Size());
     
     std::copy(outputV_.rbegin(), outputV_.rend(), std::back_inserter(result));
-    
     std::copy(inputV_.begin(), inputV_.end(), std::back_inserter(result));
     
     return result;
 }
 
-inline void Queue::Push(int val) {
+void Queue::Push(int val) {
     inputV_.push_back(val);
 }
 
@@ -83,11 +83,8 @@ bool Queue::Pop() {
     if (outputV_.empty() && inputV_.empty()) {
         return false;    
     }
-
     CopyIfOutEmpty();
-
     outputV_.pop_back();
-
     return true;    
 }
 

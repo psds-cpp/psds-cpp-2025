@@ -1,5 +1,5 @@
+#include <cctype>
 #include <cstddef>
-#include <stdexcept>
 
 // Есть ощущение, что это можно решить как-то более лаконично и просто
 
@@ -11,15 +11,8 @@
  */
 size_t GetIdenticalCharSequenceLen(char *array) {
     size_t sequenceLen = 0;
-
-    if (array[0] == '\0') {
-        return 0;
-    }
-
-    while (array[0] == array[sequenceLen]) {
-        ++sequenceLen;
-    }
-
+    if (array[0] == '\0') return 0;
+    while (array[0] == array[sequenceLen]) ++sequenceLen;
     return sequenceLen;
 }
 
@@ -28,7 +21,7 @@ size_t GetIdenticalCharSequenceLen(char *array) {
  * @param array указатель на начало обрабатываемого массива.
  * @param convertedSymIdx ссылка на индекс последнего сконвертированного символа.
  * @param currentSymIdx ссылка на индекс текущего обрабатываемого символа.
- * @param swapChar знак, на который будет произведена замена array[convertedSymIdx].
+ * @param swapChar символ, на который будет произведена замена array[convertedSymIdx].
  * @return none
  */
 void ConvertIdenticalCharacters(char array[], size_t& convertedSymIdx, size_t& currentSymIdx, char swapChar) {  
@@ -41,11 +34,7 @@ void ConvertIdenticalCharacters(char array[], size_t& convertedSymIdx, size_t& c
         return;    
     }
 
-    if (sequenceLen >= 10) {
-        array[convertedSymIdx++] = '0';
-    } else {
-        array[convertedSymIdx++] = sequenceLen + '0';
-    }
+    array[convertedSymIdx++] = sequenceLen >= 10 ? '0' : sequenceLen + '0';
 
     currentSymIdx += sequenceLen;
 }
@@ -60,7 +49,6 @@ size_t CharChanger(char array[], size_t size, char delimiter = ' ') {
 
         if (isspace(array[currentSymbolIdx])) {
             currentSymbolIdx += GetIdenticalCharSequenceLen(&array[currentSymbolIdx]);
-
             array[convertedSymbolIdx++] = delimiter;
             continue;
         }
