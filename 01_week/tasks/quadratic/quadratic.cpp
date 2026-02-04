@@ -44,7 +44,8 @@ void SolveQuadratic(int a, int b, int c) {
     double root1 = 0.0, root2 = 0.0;
 
     if (discriminant == 0) {
-        std::cout << -b / (2.0 * a);    
+        std::cout << -b / (2.0 * a);
+        return;   
     }
 
     if (discriminant < 0) {

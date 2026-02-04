@@ -44,7 +44,27 @@ public:
             return false;
         }
 
-        return GetQueueAsVector() == other.GetQueueAsVector();
+        if (outputV_.size() == Size() && other.outputV_.size() == other.Size()) {
+            return outputV_ == other.outputV_;
+        }
+
+        size_t idx = 0;
+
+        for (int i = outputV_.size() - 1; i >= 0; --i) {
+            if (outputV_[i] != other.GetElementAt(idx)) {
+                return false;
+            }
+            ++idx;
+        }
+
+        for (size_t i = 0; i < inputV_.size(); ++i) {
+            if (inputV_[i] != other.GetElementAt(idx)) {
+                return false;
+            }
+            ++idx;
+        }
+
+        return true;
     }
 
     bool operator!=(const Queue& other) const {
@@ -53,6 +73,7 @@ public:
     
 private:
     void CopyIfOutEmpty();
+    int GetElementAt(size_t idx) const;
     std::vector<int> GetQueueAsVector() const;
     std::vector<int> inputV_{};
     std::vector<int> outputV_{};
@@ -63,6 +84,14 @@ void Queue::CopyIfOutEmpty() {
         outputV_ = std::vector<int>(inputV_.rbegin(), inputV_.rend());
         inputV_.clear();
     }
+}
+
+int Queue::GetElementAt(size_t idx) const {
+    if (idx < outputV_.size()) {
+        return outputV_[outputV_.size() - 1 - idx];
+    }
+
+    return inputV_[idx - outputV_.size()];
 }
 
 std::vector<int> Queue::GetQueueAsVector() const {
