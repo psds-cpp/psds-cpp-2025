@@ -6,10 +6,15 @@ class RingBuffer {
 public:
     RingBuffer() : ringBuff_(1), head_(0), tail_(0), size_(0) {}
     
-    RingBuffer(size_t capacity) : ringBuff_(capacity > 0 ? capacity : 1), head_(0), tail_(0), size_(0) {}
+    RingBuffer(size_t capacity) : ringBuff_(capacity > 0 ? capacity : 1),
+                                  head_(0),
+                                  tail_(0),
+                                  size_(0) {}
 
-    RingBuffer(size_t capacity, const int iVal) : ringBuff_(capacity > 0 ? capacity : 1, iVal), head_(capacity), tail_(0),
-                                             size_(capacity > 0 ? capacity : 1) {}
+    RingBuffer(size_t capacity, int iVal) : ringBuff_(capacity > 0 ? capacity : 1, iVal),
+                                            head_(capacity),
+                                            tail_(0),
+                                            size_(capacity > 0 ? capacity : 1) {}
 
     RingBuffer(std::initializer_list<int> list) : ringBuff_(list), head_(0), tail_(0), size_(list.size()) {        
         if (list.size() == 0) {
@@ -35,18 +40,18 @@ public:
     std::vector<int> Vector() const;
     
     int& operator[](size_t idx) {
-        return ringBuff_[(tail_ + idx) % ringBuff_.size()];
+        return ringBuff_[(tail_ + idx) % ringBuff_.capacity()];
     }
 
     const int& operator[](size_t idx) const {
-        return ringBuff_[(tail_ + idx) % ringBuff_.size()];
+        return ringBuff_[(tail_ + idx) % ringBuff_.capacity()];
     }
 
 private:
     std::vector<int> ringBuff_{};
-    size_t head_  = 0;
-    size_t tail_  = 0;
-    size_t size_  = 0;
+    size_t head_ = 0;
+    size_t tail_ = 0;
+    size_t size_ = 0;
 };
 
 void RingBuffer::Push(int val) {
@@ -60,20 +65,20 @@ void RingBuffer::Push(int val) {
         ++size_;
     } else {
         // аналогично head
-        tail_ = (tail_ + 1) % ringBuff_.capacity();
+        tail_ = (tail_ + 1) % cap;
     }
 }
 
 bool RingBuffer::TryPush(int val) {
-    size_t cap = ringBuff_.capacity();
+    size_t capacity = ringBuff_.capacity();
 
-    if (size_ == cap) {
+    if (size_ == capacity) {
         return false;
     }
 
     ringBuff_[head_] = val;
     // при head = buff.capacity(), head снова станет = 0
-    head_ = (head_ + 1) % cap;
+    head_ = (head_ + 1) % capacity;
 
     ++size_;
 
@@ -88,14 +93,14 @@ void RingBuffer::Pop() {
 }
 
 bool RingBuffer::TryPop(int& val) {    
-    if (size_ > 0) {
-        val = ringBuff_[tail_];
-        tail_ = (tail_ + 1) % ringBuff_.capacity();
-        --size_;
-        return true;
+    if (size_ == 0) {
+        return false;
     }
-    
-    return false; 
+        
+    val = ringBuff_[tail_];
+    tail_ = (tail_ + 1) % ringBuff_.capacity();
+    --size_;
+    return true;
 }
 
 int& RingBuffer::Front() {
@@ -147,43 +152,36 @@ void RingBuffer::Clear() {
 
 void RingBuffer::Resize(size_t newSize) {
     if (newSize == 0) {
-        ++newSize;
-    }   
-    
-    if (newSize == ringBuff_.size()) {
+        newSize = 1;
+    }
+
+    if (newSize == ringBuff_.capacity()) {
         return;
     }
 
-    size_t sz = std::min(size_, newSize);
 
-    std::vector<int> tempV;
-    tempV.reserve(sz);
+    std::vector<int> tempV(newSize);
 
-    for (size_t i = 0; i < sz; ++i) {
-        tempV.push_back(ringBuff_[(head_ - 1 - i + ringBuff_.size()) % ringBuff_.size()]);
+    size_t elemsToCopy = std::min(size_, newSize);
+    for (size_t i = 0; i < elemsToCopy; ++i) {
+        tempV[i] = ringBuff_[(tail_ + size_ - elemsToCopy + i) % ringBuff_.capacity()];
     }
 
-    std::reverse(tempV.begin(), tempV.end());
-    ringBuff_.resize(newSize);
+    ringBuff_.swap(tempV);
 
-    for (size_t i = 0; i < sz; ++i) {
-        ringBuff_[i] = tempV[i];
-    }
-
-    ringBuff_.shrink_to_fit();
-    
     tail_ = 0;
-    head_ = sz;
-    size_ = sz;
+    head_ = elemsToCopy;
+    size_ = elemsToCopy;
 }
 
 std::vector<int> RingBuffer::Vector() const {
-    std::vector<int> v;
-    v.reserve(size_);
+    std::vector<int> rb_as_vector;
+    size_t capacity = ringBuff_.capacity();
+    rb_as_vector.reserve(capacity);
     
     for (size_t i = 0; i < size_; ++i) {
-        v.push_back(ringBuff_[(tail_ + i) % ringBuff_.size()]);
+        rb_as_vector.push_back(ringBuff_[(tail_ + i) % capacity]);
     }
 
-    return v;
+    return rb_as_vector;
  } 

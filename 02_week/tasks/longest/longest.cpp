@@ -1,13 +1,7 @@
-#include <stdexcept>
-
+#include <cstddef>
 
 const char* FindLongestSubsequence(const char* begin, const char* end, size_t& count) {
-    if (begin == nullptr || end == nullptr) {
-        count = 0;
-        return nullptr;
-    }
-
-    if (begin >= end) {
+    if (!begin || !end || begin >= end) {
         count = 0;
         return nullptr;
     }
@@ -16,7 +10,7 @@ const char* FindLongestSubsequence(const char* begin, const char* end, size_t& c
     const char* longestSequenceStart = begin;
 
     while (begin != end) {
-        currSequenseLen++;
+        ++currSequenseLen;
 
         if (*begin != *(begin + 1)) {
             if (currSequenseLen > count) {

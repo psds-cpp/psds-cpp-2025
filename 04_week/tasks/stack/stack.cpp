@@ -13,7 +13,7 @@ public:
     void Swap(Stack& other);
 
     bool operator==(const Stack& other) const {
-        return this->stack_ == other.stack_;
+        return stack_ == other.stack_;
     }
 
     bool operator!=(const Stack& other) const {

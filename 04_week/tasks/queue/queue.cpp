@@ -14,21 +14,21 @@ public:
         }
     };
     
-    Queue(std::vector<int> v) : outputV_(v.rbegin(), v.rend()){};
+    Queue(std::vector<int>& v) : outputV_(v.rbegin(), v.rend()){};
 
     Queue(std::initializer_list<int> list) : inputV_(list) {};
 
-    Queue(const size_t size) {
+    Queue(size_t size) {
         inputV_.reserve(size);
         outputV_.reserve(size);
     };
     
-    Queue(const int size) {
-        inputV_.reserve(size);
-        outputV_.reserve(size);
-    };
+    // Queue(const int size) {
+    //     inputV_.reserve(size);
+    //     outputV_.reserve(size);
+    // };
         
-    inline void Push(int val);
+    void Push(int val);
     bool Pop();
     int& Front();
     const int& Front() const;
@@ -44,7 +44,27 @@ public:
             return false;
         }
 
-        return this->GetQueueAsVector() == other.GetQueueAsVector();
+        if (outputV_.size() == Size() && other.outputV_.size() == other.Size()) {
+            return outputV_ == other.outputV_;
+        }
+
+        size_t idx = 0;
+
+        for (int i = outputV_.size() - 1; i >= 0; --i) {
+            if (outputV_[i] != other.GetElementAt(idx)) {
+                return false;
+            }
+            ++idx;
+        }
+
+        for (size_t i = 0; i < inputV_.size(); ++i) {
+            if (inputV_[i] != other.GetElementAt(idx)) {
+                return false;
+            }
+            ++idx;
+        }
+
+        return true;
     }
 
     bool operator!=(const Queue& other) const {
@@ -53,6 +73,7 @@ public:
     
 private:
     void CopyIfOutEmpty();
+    int GetElementAt(size_t idx) const;
     std::vector<int> GetQueueAsVector() const;
     std::vector<int> inputV_{};
     std::vector<int> outputV_{};
@@ -65,17 +86,25 @@ void Queue::CopyIfOutEmpty() {
     }
 }
 
+int Queue::GetElementAt(size_t idx) const {
+    if (idx < outputV_.size()) {
+        return outputV_[outputV_.size() - 1 - idx];
+    }
+
+    return inputV_[idx - outputV_.size()];
+}
+
 std::vector<int> Queue::GetQueueAsVector() const {
     std::vector<int> result;
+    result.reserve(Size());
     
     std::copy(outputV_.rbegin(), outputV_.rend(), std::back_inserter(result));
-    
     std::copy(inputV_.begin(), inputV_.end(), std::back_inserter(result));
     
     return result;
 }
 
-inline void Queue::Push(int val) {
+void Queue::Push(int val) {
     inputV_.push_back(val);
 }
 
@@ -83,11 +112,8 @@ bool Queue::Pop() {
     if (outputV_.empty() && inputV_.empty()) {
         return false;    
     }
-
     CopyIfOutEmpty();
-
     outputV_.pop_back();
-
     return true;    
 }
 

@@ -1,29 +1,29 @@
-#include <stdexcept>
 #include <cmath>
 #include <iomanip>
+#include <iostream>
 
 // Уверен, что это можно сделать значительно качественнее, но дедлайн близко,
 // поэтому спагетти код >:)
 
 void SolveQuadratic(int a, int b, int c) { 
-    if (!a && !b && !c) {
+    if (a == 0 && b == 0 && c == 0) {
         std::cout << "infinite solutions";
         return;
     }
     
-    if (!a && !b) {
+    if (a == 0 && b == 0) {
         std::cout << "no solutions";
         return;
     }
 
     std::cout << std::setprecision(6);
 
-    if (!a) {
-        std::cout << (static_cast<double>(-c) / b);
+    if (a == 0) {
+        std::cout << static_cast<double>(-c) / b;
         return;
     }
 
-    if (!b) {
+    if (b == 0) {
         if (static_cast<double>(-c) / a < 0) {
             std::cout << "no solutions";
             return;
@@ -40,25 +40,22 @@ void SolveQuadratic(int a, int b, int c) {
         return;
     }
 
-    double d = static_cast<double>(b) * b - 4.0 * a * c;
-    double x1 = 0.0, x2 = 0.0;
+    double discriminant = static_cast<double>(b) * b - 4.0 * a * c;
+    double root1 = 0.0, root2 = 0.0;
 
-    if (d < 0) {
+    if (discriminant == 0) {
+        std::cout << -b / (2.0 * a);
+        return;   
+    }
+
+    if (discriminant < 0) {
         std::cout << "no solutions";
         return;
     }
 
-    if (d > 0) {
-        x1 = ((-b - std::sqrt(d)) / (2.0 * a));
-        x2 = ((-b + std::sqrt(d)) / (2.0 * a));
+    root1 = ((-b - std::sqrt(discriminant)) / (2.0 * a));
+    root2 = ((-b + std::sqrt(discriminant)) / (2.0 * a));
 
-        if (x1 > x2) {
-            std::cout << x2 << " " << x1;
-        } else {
-            std::cout << x1 << " " << x2;
-        } 
-        return;
-    } 
-
-    std::cout << -b / (2.0 * a);
+    root1 > root2 ? std::cout << root2 << " " << root1 :
+                  std:: cout << root1 << " " << root2;
 }
