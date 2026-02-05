@@ -7,13 +7,12 @@ namespace {
     constexpr double EPS_ = 1e-12;
 }
 
-
 double DegToRad(double deg) {
     return deg * M_PI / 180.0;
 }
 
 double RadToDeg(double rad){
-    return rad * 180 / M_PI;
+    return rad * 180.0 / M_PI;
 }
 
 double NormalizePhase(double phase) {
@@ -38,22 +37,22 @@ struct AlgTag {};
 class Phasor {
 public:
     Phasor() = default;
-    Phasor(double A, double rad) {
-        if (A < 0) {
-            A = -A;
+    Phasor(double magnitude, double rad) {
+        if (magnitude < 0) {
+            magnitude = -magnitude;
             rad += M_PI;
         }
 
         rad = NormalizePhase(rad);
 
-        real_ = A * std::cos(rad);
-        imag_ = A * std::sin(rad);
+        real_ = magnitude * std::cos(rad);
+        imag_ = magnitude * std::sin(rad);
     };
-    Phasor(double A, double rad, ExpTag) : Phasor(A, rad) {};
-    Phasor(double A, double deg, DegTag) : Phasor(A, DegToRad(deg)) {};
+    Phasor(double magnitude, double rad, ExpTag) : Phasor(magnitude, rad) {};
+    Phasor(double magnitude, double deg, DegTag) : Phasor(magnitude, DegToRad(deg)) {};
     Phasor(double real, double imag, AlgTag) : real_(real), imag_(imag) {};
 
-    void SetPolar(double A, double rad);
+    void SetPolar(double magnitude, double rad);
     void SetCartesian(double real, double imag);
     double Magnitude() const;
     double Phase() const;
@@ -132,17 +131,17 @@ Phasor operator-(const Phasor& lhs, const Phasor& rhs) {
 }
 
 Phasor operator*(const Phasor& lhs, const Phasor& rhs) {
-    double A = lhs.Magnitude() * rhs.Magnitude();
+    double magnitude = lhs.Magnitude() * rhs.Magnitude();
     double rad = lhs.Phase() + rhs.Phase();
 
-    return Phasor(A, NormalizePhase(rad));
+    return Phasor(magnitude, NormalizePhase(rad));
 }
 
 Phasor operator/(const Phasor& lhs, const Phasor& rhs) {
-    double A = lhs.Magnitude() / rhs.Magnitude();
+    double magnitude = lhs.Magnitude() / rhs.Magnitude();
     double rad = lhs.Phase() - rhs.Phase();
 
-    return Phasor(A, NormalizePhase(rad));    
+    return Phasor(magnitude, NormalizePhase(rad));    
 }
 
 bool operator==(const Phasor& lhs, const Phasor& rhs) {
@@ -159,8 +158,8 @@ Phasor operator+(const Phasor& lhs, double rhs) {
 }
 
 // Сложение коммутативно
-Phasor operator+(double rhs, const Phasor& lhs) {
-    return Phasor(lhs.Real() + rhs, lhs.Imag(), AlgTag{});
+Phasor operator+(double lhs, const Phasor& rhs) {
+    return rhs + lhs;
 }
     
 Phasor operator-(const Phasor& lhs, double rhs) {
@@ -171,14 +170,13 @@ Phasor operator-(double lhs, const Phasor& rhs) {
     return (lhs + (-rhs));
 }
 
-
 Phasor operator*(const Phasor& lhs, double rhs) {
     return Phasor(lhs.Real() * rhs, lhs.Imag() * rhs, AlgTag{});
 }
 
 // Умножение тоже коммутативно
-Phasor operator*(double rhs, const Phasor& lhs) {
-    return Phasor(lhs.Real() * rhs, lhs.Imag() * rhs, AlgTag{});
+Phasor operator*(double lhs, const Phasor& rhs) {
+    return rhs * lhs;
 }
     
 Phasor operator/(const Phasor& lhs, double rhs) {
@@ -186,9 +184,9 @@ Phasor operator/(const Phasor& lhs, double rhs) {
 }
         
 Phasor operator/(double lhs, const Phasor& rhs) {
-    double A = std::abs(lhs) / rhs.Magnitude();
+    double magnitude = std::abs(lhs) / rhs.Magnitude();
     double rad = ((lhs >= 0) ? 0.0 : M_PI) - rhs.Phase();
-    return Phasor(A, NormalizePhase(rad));
+    return Phasor(magnitude, NormalizePhase(rad));
 }
 
 std::ostream& operator<<(std::ostream& os, const Phasor& p) {
@@ -198,8 +196,8 @@ std::ostream& operator<<(std::ostream& os, const Phasor& p) {
     return os;
 }
 
-void Phasor::SetPolar(double A, double rad) {
-    *this = Phasor(A, rad);
+void Phasor::SetPolar(double magnitude, double rad) {
+    *this = Phasor(magnitude, rad);
 }
 
 void Phasor::SetCartesian(double real, double imag) {
@@ -251,10 +249,10 @@ Phasor MakePhasorCartesian(double real, double imag) {
     return Phasor(real, imag, AlgTag{});
 }
 
-Phasor MakePhasorPolar(double A, double rad) {
-    return Phasor(A, rad);
+Phasor MakePhasorPolar(double magnitude, double rad) {
+    return Phasor(magnitude, rad);
 }
 
-Phasor MakePhasorPolarDeg(double A, double deg) {
-    return Phasor(A, deg, DegTag{});
+Phasor MakePhasorPolarDeg(double magnitude, double deg) {
+    return Phasor(magnitude, deg, DegTag{});
 }

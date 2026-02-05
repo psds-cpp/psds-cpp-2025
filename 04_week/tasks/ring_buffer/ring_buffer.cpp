@@ -70,15 +70,15 @@ void RingBuffer::Push(int val) {
 }
 
 bool RingBuffer::TryPush(int val) {
-    size_t cap = ringBuff_.capacity();
+    size_t capacity = ringBuff_.capacity();
 
-    if (size_ == cap) {
+    if (size_ == capacity) {
         return false;
     }
 
     ringBuff_[head_] = val;
     // при head = buff.capacity(), head снова станет = 0
-    head_ = (head_ + 1) % cap;
+    head_ = (head_ + 1) % capacity;
 
     ++size_;
 
@@ -175,12 +175,13 @@ void RingBuffer::Resize(size_t newSize) {
 }
 
 std::vector<int> RingBuffer::Vector() const {
-    std::vector<int> v;
-    v.reserve(size_);
+    std::vector<int> rb_as_vector;
+    size_t capacity = ringBuff_.capacity();
+    rb_as_vector.reserve(capacity);
     
     for (size_t i = 0; i < size_; ++i) {
-        v.push_back(ringBuff_[(tail_ + i) % ringBuff_.size()]);
+        rb_as_vector.push_back(ringBuff_[(tail_ + i) % capacity]);
     }
 
-    return v;
+    return rb_as_vector;
  } 
