@@ -28,7 +28,6 @@ public:
     int operator[](const size_t idx) const;
     RingBuffer& operator=(const RingBuffer& other);
 private:
-    int m_null_value = 0;
     size_t m_begin = 0;
     size_t m_end = 0;
     size_t m_size = 0;
@@ -136,30 +135,18 @@ bool RingBuffer::TryPop(int& pop_value) {
 }
 
 int& RingBuffer::Front() {
-    if (Size() == 0)
-        return m_null_value;
-
     return m_buffer[m_last()];
 }
 
 int RingBuffer::Front() const {
-    if (Size() == 0)
-        return m_null_value;
-
     return m_buffer[m_last()];
 }
 
 int& RingBuffer::Back() {
-    if (Size() == 0)
-        return m_null_value;
-
     return m_buffer[m_begin];
 }
 
 int RingBuffer::Back() const {
-    if (Size() == 0)
-        return m_null_value;
-
     return m_buffer[m_begin];
 }
 
