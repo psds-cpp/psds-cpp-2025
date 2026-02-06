@@ -77,7 +77,7 @@ RingBuffer::RingBuffer(const RingBuffer& other) {
     m_copyCore(other);
 }
 
-inline void RingBuffer::m_pushBackCore(const int item) {
+void RingBuffer::m_pushBackCore(const int item) {
     if (m_buffer.size() == Capacity()) {
         m_buffer[m_end] = item;
         if (m_size != m_buffer.size()) {
@@ -102,32 +102,30 @@ bool RingBuffer::TryPush(const int item) {
     if (Full()) {
         return false;
     }
-    else {
-        m_pushBackCore(item);
-        return true;
-    }
+
+    m_pushBackCore(item);
+    return true;
 }
 
-inline void RingBuffer::m_popCore() {
+void RingBuffer::m_popCore() {
     m_begin = (m_begin + 1) % Capacity();
     --m_size;
 }
 
 void RingBuffer::Pop() {
-    if (Size() == 0)
+    if (Size() == 0) {
         return;
+    }
 
     m_popCore();
 }
 
 bool RingBuffer::TryPop(int& pop_value) {
-    if (Size() == 0)
+    if (Size() == 0) {
         return false;
-
+    }
     pop_value = m_buffer[m_begin];
-
     m_popCore();
-
     return true;
 }
 
