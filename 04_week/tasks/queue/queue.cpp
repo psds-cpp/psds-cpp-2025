@@ -1,15 +1,15 @@
 #include <vector>
 #include <stack>
+#include <algorithm>
 #include <stddef.h>
-
 
 class Queue {
 public:
     Queue() = default;
     Queue(std::stack<int> stack);
     Queue(std::vector<int> vector);
-    Queue(std::initializer_list<int> values);
-    Queue(const int size);
+    Queue(const std::initializer_list<int>& values);
+    Queue(const size_t size);
     void Push(const int x);
     bool Pop();
     int& Back();
@@ -36,20 +36,13 @@ Queue::Queue(std::stack<int> stack) {
     }
 }
 
-Queue::Queue(std::vector<int> vector) {
-    while (!vector.empty()) {
-        m_output.push_back(vector.back());
-        vector.pop_back();
-    }
+Queue::Queue(std::vector<int> vector) : m_output(std::move(vector)) {
+    std::reverse(m_output.begin(), m_output.end());
 }
 
-Queue::Queue(std::initializer_list<int> ilist) {
-    for (const int v : ilist) {
-        m_input.push_back(v);
-    }
-}
+Queue::Queue(const std::initializer_list<int>& ilist): m_input(ilist) {}
 
-Queue::Queue(const int size) {
+Queue::Queue(const size_t size) {
     m_input.reserve(size);
     m_output.reserve(size);
 }
