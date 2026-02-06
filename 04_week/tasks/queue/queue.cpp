@@ -27,6 +27,7 @@ private:
     std::vector<int> m_input{};
     std::vector<int> m_output{};
     std::vector<int> m_mergeVectors(const auto& input, const auto& output) const;
+    void m_pushInputBack();
 };
 
 Queue::Queue(std::stack<int> stack) {
@@ -58,13 +59,10 @@ bool Queue::Pop() {
 
     if (m_output.empty()) {
         while (!m_input.empty()) {
-            m_output.push_back(m_input.back());
-            m_input.pop_back();
+            m_pushInputBack();
         }
     }
-
     m_output.pop_back();
-    
     return true;
 }
 
@@ -129,11 +127,34 @@ std::vector<int> Queue::m_mergeVectors(const auto& input, const auto& output) co
     return merged;
 }
 
-bool Queue::operator==(const Queue& other) const {
-    std::vector<int> this_merged = m_mergeVectors(m_input, m_output);
-    std::vector<int> other_merged = m_mergeVectors(other.m_input, other.m_output);
+void Queue::m_pushInputBack() {
+    m_output.push_back(m_input.back());
+    m_input.pop_back();
+}
 
-    return this_merged == other_merged;
+bool Queue::operator==(const Queue& other) const {
+    if (this == &other) {
+        return true;
+    } else if (Size() != other.Size()) {
+        return false;
+    }
+
+    const size_t out_size = m_output.size();
+    const size_t other_out_size = other.m_output.size();
+    const size_t total = Size();
+
+    for (size_t i = 0; i < total; ++i) {
+        const int& a = (i < out_size)
+            ? m_output[out_size - 1 - i]
+            : m_input[i - out_size];
+
+        const int& b = (i < other_out_size)
+            ? other.m_output[other_out_size - 1 - i]
+            : other.m_input[i - other_out_size];
+
+        if (a != b) return false;
+    }
+    return true;
 }
 
 bool Queue::operator!=(const Queue& other) const {
