@@ -28,9 +28,9 @@ public:
     int operator[](const size_t idx) const;
     RingBuffer& operator=(const RingBuffer& other);
 private:
+    size_t m_size = 0;
     size_t m_begin = 0;
     size_t m_end = 0;
-    size_t m_size = 0;
     std::vector<int> m_buffer{};
     size_t m_checkZeroSize(const size_t size) const;
     void m_popCore();
@@ -51,14 +51,11 @@ RingBuffer::RingBuffer(size_t size) {
     m_buffer.reserve(m_checkZeroSize(size));
 }
 
-RingBuffer::RingBuffer(const size_t size, const int val) {
-    m_buffer.reserve(m_checkZeroSize(size));
-    for (size_t i = 0; i < Capacity(); ++i) {
-        m_buffer.push_back(val);
-    }
-    m_size = m_buffer.size();
-    m_end = m_buffer.size();
-}
+RingBuffer::RingBuffer(const size_t size, const int val)
+    : m_size(m_checkZeroSize(size)),
+    m_end(m_size),
+    m_buffer(m_size, val)
+{}
 
 RingBuffer::RingBuffer(const std::initializer_list<int> ilist) : m_buffer(ilist) {
     if (m_buffer.empty()) {
