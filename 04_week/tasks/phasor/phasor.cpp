@@ -39,29 +39,29 @@ public:
 private:
     double m_m = .0;
     double m_phi = .0;
-    double m_deg_to_rad(const double deg) const;
-    double m_rad_to_deg(const double deg) const;
-    void m_normalize_magnitude();
-    void m_normalize_phase();
-    void m_normalize_phasor();
+    double m_degToRad(const double deg) const;
+    double m_radToDeg(const double deg) const;
+    void m_normalizeMagnitude();
+    void m_normalizePhase();
+    void m_normalizePhasor();
 };
 
-double Phasor::m_deg_to_rad(const double deg) const {
+double Phasor::m_degToRad(const double deg) const {
     return deg * M_PI / 180;
 }
 
-double Phasor::m_rad_to_deg(const double rad) const {
+double Phasor::m_radToDeg(const double rad) const {
     return rad * 180 / M_PI;
 }
 
-void Phasor::m_normalize_magnitude() {
+void Phasor::m_normalizeMagnitude() {
     if (m_m < 0) {
         m_m = std::abs(m_m);
         m_phi += (m_phi > 0) ? -M_PI : M_PI;
     }
 }
 
-void Phasor::m_normalize_phase() {
+void Phasor::m_normalizePhase() {
     m_phi = std::atan2(std::sin(m_phi), std::cos(m_phi));
 
     if (m_phi <= -M_PI) {
@@ -69,24 +69,24 @@ void Phasor::m_normalize_phase() {
     }
 }
 
-void Phasor::m_normalize_phasor() {
-    m_normalize_magnitude();
-    m_normalize_phase();
+void Phasor::m_normalizePhasor() {
+    m_normalizeMagnitude();
+    m_normalizePhase();
 }
 
 void Phasor::SetCartesian(const double x, const double y) {
     m_m = sqrt(pow(x, 2) + pow(y, 2));
     m_phi = atan2(y, x);
-    m_normalize_phasor();
+    m_normalizePhasor();
 }
 
 Phasor::Phasor() {}
 Phasor::Phasor(const double m, const double phi = 0) : m_m(m), m_phi(phi) {
-    m_normalize_phasor();
+    m_normalizePhasor();
 
 }
 Phasor::Phasor(const double m, const double phi, const ExpTag&) : Phasor(m, phi) {}
-Phasor::Phasor(const double m, const double deg, const DegTag&) : Phasor(m, m_deg_to_rad(deg)) {}
+Phasor::Phasor(const double m, const double deg, const DegTag&) : Phasor(m, m_degToRad(deg)) {}
 Phasor::Phasor(const double x, const double y, const AlgTag&) {
     SetCartesian(x, y);
 }
@@ -94,7 +94,7 @@ Phasor::Phasor(const double x, const double y, const AlgTag&) {
 void Phasor::SetPolar(const double m, const double phi) {
     m_m = m;
     m_phi = phi;
-    m_normalize_phasor();
+    m_normalizePhasor();
 }
 
 double Phasor::Magnitude() const {
@@ -114,11 +114,11 @@ double Phasor::Angle() const {
 }
 
 double Phasor::PhaseDeg() const {
-    return m_rad_to_deg(m_phi);
+    return m_radToDeg(m_phi);
 }
 
 double Phasor::AngleDeg() const {
-    return m_rad_to_deg(m_phi);
+    return m_radToDeg(m_phi);
 }
 
 double Phasor::Real() const {

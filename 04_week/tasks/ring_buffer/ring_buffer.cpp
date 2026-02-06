@@ -33,14 +33,14 @@ private:
     size_t m_end = 0;
     size_t m_size = 0;
     std::vector<int> m_buffer{};
-    size_t m_check_zero_size(const size_t size) const;
-    void m_pop_core();
-    void m_push_back_core(const int item);
-    void m_copy_core(const RingBuffer& other);
+    size_t m_checkZeroSize(const size_t size) const;
+    void m_popCore();
+    void m_pushBackCore(const int item);
+    void m_copyCore(const RingBuffer& other);
     int m_last() const;
 };
 
-size_t RingBuffer::m_check_zero_size(const size_t size) const {
+size_t RingBuffer::m_checkZeroSize(const size_t size) const {
     return (size == 0) ? 1 : size;
 }
 
@@ -49,11 +49,11 @@ int RingBuffer::m_last() const {
 }
 
 RingBuffer::RingBuffer(size_t size) {
-    m_buffer.reserve(m_check_zero_size(size));
+    m_buffer.reserve(m_checkZeroSize(size));
 }
 
 RingBuffer::RingBuffer(const size_t size, const int val) {
-    m_buffer.reserve(m_check_zero_size(size));
+    m_buffer.reserve(m_checkZeroSize(size));
     for (size_t i = 0; i < Capacity(); ++i) {
         m_buffer.push_back(val);
     }
@@ -69,7 +69,7 @@ RingBuffer::RingBuffer(const std::initializer_list<int> ilist) : m_buffer(ilist)
     m_end = m_buffer.size();
 }
 
-void RingBuffer::m_copy_core(const RingBuffer& other) {
+void RingBuffer::m_copyCore(const RingBuffer& other) {
     m_begin = other.m_begin;
     m_end = other.m_end;
     m_size = other.m_size;
@@ -78,10 +78,10 @@ void RingBuffer::m_copy_core(const RingBuffer& other) {
 }
 
 RingBuffer::RingBuffer(const RingBuffer& other) {
-    m_copy_core(other);
+    m_copyCore(other);
 }
 
-inline void RingBuffer::m_push_back_core(const int item) {
+inline void RingBuffer::m_pushBackCore(const int item) {
     if (m_buffer.size() == Capacity()) {
         m_buffer[m_end] = item;
         if (m_size != m_buffer.size()) {
@@ -99,7 +99,7 @@ inline void RingBuffer::m_push_back_core(const int item) {
 }
 
 void RingBuffer::Push(const int item) {
-    m_push_back_core(item);
+    m_pushBackCore(item);
 }
 
 bool RingBuffer::TryPush(const int item) {
@@ -107,12 +107,12 @@ bool RingBuffer::TryPush(const int item) {
         return false;
     }
     else {
-        m_push_back_core(item);
+        m_pushBackCore(item);
         return true;
     }
 }
 
-inline void RingBuffer::m_pop_core() {
+inline void RingBuffer::m_popCore() {
     m_begin = (m_begin + 1) % Capacity();
     --m_size;
 }
@@ -121,7 +121,7 @@ void RingBuffer::Pop() {
     if (Size() == 0)
         return;
 
-    m_pop_core();
+    m_popCore();
 }
 
 bool RingBuffer::TryPop(int& pop_value) {
@@ -130,7 +130,7 @@ bool RingBuffer::TryPop(int& pop_value) {
 
     pop_value = m_buffer[m_begin];
 
-    m_pop_core();
+    m_popCore();
 
     return true;
 }
@@ -213,7 +213,7 @@ std::vector<int> RingBuffer::Vector() const {
 }
 
 void RingBuffer::Resize(const size_t size) {
-    size_t new_size = m_check_zero_size(size);
+    size_t new_size = m_checkZeroSize(size);
 
     if (new_size == Capacity()) {
         return;
@@ -251,6 +251,6 @@ RingBuffer& RingBuffer::operator=(const RingBuffer& other) {
         return *this;
     }
 
-    m_copy_core(other);
+    m_copyCore(other);
     return *this;
 }

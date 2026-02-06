@@ -26,7 +26,7 @@ private:
     int m_null_value = 0;
     std::vector<int> m_input{};
     std::vector<int> m_output{};
-    std::vector<int> m_merge_vectors(const auto& input, const auto& output) const;
+    std::vector<int> m_mergeVectors(const auto& input, const auto& output) const;
 };
 
 Queue::Queue(std::stack<int> stack) {
@@ -121,7 +121,7 @@ void Queue::Swap(Queue& other) {
     m_output.swap(other.m_output);
 }
 
-std::vector<int> Queue::m_merge_vectors(const auto& input, const auto& output) const {
+std::vector<int> Queue::m_mergeVectors(const auto& input, const auto& output) const {
     std::vector<int> merged{};
     merged.reserve(input.size() + output.size());
 
@@ -137,8 +137,8 @@ std::vector<int> Queue::m_merge_vectors(const auto& input, const auto& output) c
 }
 
 bool Queue::operator==(const Queue& other) const {
-    std::vector<int> this_merged = m_merge_vectors(m_input, m_output);
-    std::vector<int> other_merged = m_merge_vectors(other.m_input, other.m_output);
+    std::vector<int> this_merged = m_mergeVectors(m_input, m_output);
+    std::vector<int> other_merged = m_mergeVectors(other.m_input, other.m_output);
 
     return this_merged == other_merged;
 }
