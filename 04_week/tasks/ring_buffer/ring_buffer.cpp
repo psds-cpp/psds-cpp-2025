@@ -169,28 +169,11 @@ void RingBuffer::Clear() {
 std::vector<int> RingBuffer::Vector() const {
     std::vector<int> vector_buffer;
     vector_buffer.reserve(Size());
-
-    if (m_end <= m_begin) {
-        size_t left_size = m_end;
-        size_t right_size = Size() - m_begin;
-
-        size_t i = m_begin;
-
-        while (i - m_begin < right_size) {
-            vector_buffer.push_back(m_buffer[i++]);
-        }
-
-        i = 0;
-        while (i < left_size) {
-            vector_buffer.push_back(m_buffer[i++]);
-        }
+    
+    for (size_t i = 0; i < Size(); ++i) {
+        vector_buffer.push_back(m_buffer[(m_begin + i) % Capacity()]);
     }
-    else {
-        for (size_t i = 0; i < Size(); ++i) {
-            vector_buffer.push_back(m_buffer[i]);
-        }
-    }
-
+    
     return vector_buffer;
 }
 
@@ -204,14 +187,12 @@ void RingBuffer::Resize(const size_t size) {
     std::vector<int> new_buffer;
     new_buffer.reserve(new_size);
 
-    std::vector<int> vector_buffer = Vector();
-
     for (
         size_t i = (Size() > new_size) ? Size() - new_size : 0;
         new_buffer.size() != new_buffer.capacity() && i < Size();
         ++i
     ) {
-        new_buffer.push_back(vector_buffer[i]);
+        new_buffer.push_back(m_buffer[(m_begin + i) % Capacity()]);
     }
 
     m_buffer = std::move(new_buffer);
