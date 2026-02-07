@@ -1,8 +1,7 @@
 #include <cstddef>
 
-
-char* FindLongestSubsequence(const char* begin, const char* end, size_t& count) {
-    char* res{nullptr};
+const char* FindLongestSubsequence(const char* begin, const char* end, size_t& count) {
+    const char* res{nullptr};
     count = 0;
 
     if(begin == nullptr || end == nullptr) return nullptr;
@@ -16,10 +15,15 @@ char* FindLongestSubsequence(const char* begin, const char* end, size_t& count) 
             continue;
         }
 
-        res = count < curLen ? const_cast<char*>(curBegin) : res;
+        res = count < curLen ? curBegin : res;
         count = count < curLen ? curLen : count;
         curLen = 1;
     }
 
     return res;
+}
+
+char* FindLongestSubsequence(char* begin, char* end, size_t& count) {
+    const char* const_res = FindLongestSubsequence(const_cast<const char*>(begin), const_cast<const char*>(end), count);
+    return const_cast<char*>(const_res);
 }

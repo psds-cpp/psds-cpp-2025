@@ -2,37 +2,23 @@
 
 
 void PrintArray(const int* begin, const int* end, size_t limit = 0) {
-    if(begin == nullptr || end == nullptr){
+    if(begin == nullptr || end == nullptr) {
         std::cout << "[]\n";
         return;
     }
 
     std::cout << "[";
-    if(begin < end){
-        size_t i = 1;
-        for(const int* curent = begin; curent < end; ++curent){
-            if(limit != 0 && i > limit){
-                std::cout << "...\n " << *curent << (curent+1 == end ? "" : ", ");
-                i = 1;
-            }
-            else{
-                std::cout << *curent << (curent+1 == end ? "" : ", ");
-            }
-            ++i;
+    int step = begin > end ? -1 : 1;
+    size_t i = 1;
+    for(const int* curent = begin; curent != end; curent += step) {
+        if(limit != 0 && i > limit) {
+            std::cout << "...\n " << *curent << (curent+step == end ? "" : ", ");
+            i = 1;
         }
-    }
-    else{
-        size_t i = 1;
-        for(const int* curent = begin; curent > end; --curent){
-            if(limit != 0 && i > limit){
-                std::cout << "...\n " << *curent << (curent-1 == end ? "" : ", ");
-                i = 1;
-            }
-            else{
-                std::cout << *curent << (curent-1 == end ? "" : ", ");
-            }
-            ++i;
+        else {
+            std::cout << *curent << (curent+step == end ? "" : ", ");
         }
+        ++i;
     }
 
     std::cout << "]\n";
