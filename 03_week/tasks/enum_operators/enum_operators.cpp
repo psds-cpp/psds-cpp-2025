@@ -1,7 +1,5 @@
 #include <cstdint>
 #include <stdexcept>
-#include <bits/stdc++.h>
-#include <sys/types.h>
 
 enum class CheckFlags : uint8_t {
     NONE = 0,
@@ -14,10 +12,9 @@ enum class CheckFlags : uint8_t {
     ALL = TIME | DATE | USER | CERT | KEYS | DEST
 };
 
-constexpr uint8_t flagAll = static_cast<uint8_t>(CheckFlags::ALL);
 
 constexpr uint8_t toUi(CheckFlags flag) {
-    return static_cast<uint8_t>(flag) & flagAll;
+    return static_cast<uint8_t>(flag) & static_cast<uint8_t>(CheckFlags::ALL);
 }
 
 constexpr CheckFlags operator|(CheckFlags lFlag, CheckFlags rFlag) {
@@ -39,7 +36,7 @@ constexpr CheckFlags operator^(CheckFlags lFlag, CheckFlags rFlag) {
 }
 
 constexpr CheckFlags operator~(CheckFlags flag) {
-    return static_cast<CheckFlags>(flagAll & ~toUi(flag));
+    return static_cast<CheckFlags>(static_cast<uint8_t>(CheckFlags::ALL) & ~toUi(flag));
 }
 
 std::ostream& operator<<(std::ostream& os, CheckFlags flag) {

@@ -46,7 +46,6 @@ public:
 private:
     double re;
     double im;
-    static constexpr double PI = 3.14159265358979323846;
 };
 
 // Арифметические операторы (объявления)
@@ -72,7 +71,6 @@ Phasor MakePhasorPolarDeg(double amplitude, double phase);
 // // Вывод в поток (объявление)
 std::ostream& operator<<(std::ostream& os, const Phasor& p);
 
-
 // Конструкторы (реализации)
 
 Phasor::Phasor() : re(0.0), im(0.0) {}
@@ -84,11 +82,10 @@ Phasor::Phasor(double amplitude, double phase) {
 Phasor::Phasor(double amplitude, double phase, ExpTag) : Phasor(amplitude, phase) {}
 
 Phasor::Phasor(double amplitude, double phase, DegTag) {
-    SetPolar(amplitude, phase * PI / 180.0);
+    SetPolar(amplitude, phase * M_PI / 180.0);
 }
 
 Phasor::Phasor(double real, double imag, AlgTag) : re(real), im(imag) {}
-
 
 // Методы (реализации)
 
@@ -112,7 +109,7 @@ double Phasor::Abs() const {
 
 double Phasor::Phase() const {
     double p = std::atan2(im, re);
-    return (p <= -PI + 1e-20) ? PI : p;
+    return (p <= -M_PI + 1e-20) ? M_PI : p;
 }
 
 double Phasor::Angle() const {
@@ -120,7 +117,7 @@ double Phasor::Angle() const {
 }
 
 double Phasor::PhaseDeg() const {
-    return Phase() * 180.0 / PI;
+    return Phase() * 180.0 / M_PI;
 }
 
 double Phasor::AngleDeg() const {
@@ -143,7 +140,6 @@ Phasor Phasor::Inv() const {
     double denom = re * re + im * im;
     return Phasor(re / denom, -im / denom, AlgTag());
 }
-
 
 // Операторы (реализации)
 
@@ -201,13 +197,12 @@ Phasor& Phasor::operator/=(double val) {
 }
 
 bool Phasor::operator==(const Phasor& other) const {
-    return this->re == other.re && this->im == other.im;
+    return re == other.re && im == other.im;
 }
 
 bool Phasor::operator!=(const Phasor& other) const {
     return !(*this == other);
 }
-
 
 // Арифметические операторы (реализации)
 
@@ -259,7 +254,6 @@ Phasor operator/(double a, const Phasor& b) {
     return Phasor(a, 0, AlgTag()) / b;
 }
 
-
 // Методы создания (реализация)
 
 Phasor MakePhasorCartesian(double re, double im) {
@@ -273,7 +267,6 @@ Phasor MakePhasorPolar(double amplitude, double phase) {
 Phasor MakePhasorPolarDeg(double amplitude, double phase) {
     return Phasor(amplitude, phase, DegTag());
 }
-
 
 // Вывод в поток (реализация)
 

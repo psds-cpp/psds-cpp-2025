@@ -2,11 +2,9 @@
 
 
 struct Date {
-    unsigned year;
-    unsigned month;
-    unsigned day;
-
-    Date (unsigned y = 0u, unsigned m = 0u, unsigned d = 0u) : year(y), month(m), day(d) {}
+    unsigned year = 0u;
+    unsigned month = 0u;
+    unsigned day = 0u;
 };
 
 bool operator==(const Date& leftDate, const Date& rightDate) {
@@ -50,15 +48,9 @@ bool operator!=(const StudentInfo& leftStudent, const StudentInfo& rightStudent)
 }
 
 bool operator<(const StudentInfo& leftStudent, const StudentInfo& rightStudent) {
-    if (leftStudent.mark != rightStudent.mark)
-        return leftStudent.mark > rightStudent.mark;
-    if (leftStudent.score != rightStudent.score)
-        return leftStudent.score < rightStudent.score;
-    if (leftStudent.course != rightStudent.course)
-        return leftStudent.course > rightStudent.course;
-    if (leftStudent.birth_date != rightStudent.birth_date)
-        return leftStudent.birth_date < rightStudent.birth_date;
-    return false;
+    return std::tie(
+        rightStudent.mark, leftStudent.score, rightStudent.course, leftStudent.birth_date)
+        < std::tie( leftStudent.mark, rightStudent.score, leftStudent.course, rightStudent.birth_date );
 }
 
 bool operator>(const StudentInfo& leftStudent, const StudentInfo& rightStudent) {

@@ -5,8 +5,8 @@
 class RingBuffer {
 public:
     // Конструкторы (объявления)
-    RingBuffer(size_t n);
-    RingBuffer(size_t n, int val);
+    RingBuffer(size_t size);
+    RingBuffer(size_t size, int val);
     RingBuffer(std::initializer_list<int> list);
 
     // Методы (объявления)
@@ -38,17 +38,15 @@ private:
 
 // Конструкторы (реализации)
 
-RingBuffer::RingBuffer(size_t n) : buf(std::max<size_t>(1, n)), begin(0), curSize(0) {}
+RingBuffer::RingBuffer(size_t size) : buf(std::max<size_t>(1, size)), begin(0), curSize(0) {}
 
-RingBuffer::RingBuffer(size_t n, int val) : buf(std::max<size_t>(1, n), val) {
-    curSize = buf.size();
-    begin = 0;
-}
+RingBuffer::RingBuffer(size_t size, int val) : buf(std::max<size_t>(1, size), val), begin(0), curSize(buf.size()) {}
 
-RingBuffer::RingBuffer(std::initializer_list<int> list) : buf(list), begin(0), curSize(list.size()) {
-    if (buf.empty())
-        buf.resize(1);
-}
+RingBuffer::RingBuffer(std::initializer_list<int> list) 
+    : buf(list.size() == 0 ? std::vector<int>(1) : std::vector<int>(list)), 
+      begin(0), 
+      curSize(list.size()) 
+{}
 
 // Методы (реализации)
 
@@ -69,34 +67,33 @@ bool RingBuffer::Full() const {
 }
 
 void RingBuffer::Push(int val) {
-    if (Full()) {
+    if (!TryPush(val)) {
         buf[begin] = val;
         begin = (begin + 1) % buf.size();
-    } else {
-        buf[(begin + curSize) % buf.size()] = val;
-        curSize++;
     }
 }
 
 bool RingBuffer::TryPush(int val) {
-    if (Full())
+    if (Full()) {
         return false;
-    Push(val);
+    }
+    buf[(begin + curSize) % buf.size()] = val;
+    curSize++;
     return true;
 }
 
 void RingBuffer::Pop() {
-    if (!Empty()) {
-        begin = (begin + 1) % buf.size();
-        curSize--;
-    }
+    int temp; 
+    TryPop(temp); 
 }
 
 bool RingBuffer::TryPop(int& val) {
-    if (Empty())
+    if (Empty()) { 
         return false;
-    val = Back();
-    Pop();
+    }
+    val = buf[begin]; 
+    begin = (begin + 1) % buf.size();
+    curSize--;
     return true;
 }
 

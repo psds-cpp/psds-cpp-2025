@@ -1,8 +1,9 @@
 #include <stdexcept>
 #include <bits/stdc++.h>
 
+using citer = std::vector<int>::const_iterator;
 
-std::pair<std::vector<int>::const_iterator, std::vector<int>::const_iterator> MinMax(const std::vector<int>& vec) {
+std::pair<citer, citer> MinMax(const std::vector<int>& vec) {
     if (vec.empty())
         return {vec.end(), vec.end()};
 

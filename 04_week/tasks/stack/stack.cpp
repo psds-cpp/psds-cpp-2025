@@ -65,8 +65,7 @@ const int& Stack::Top() const {
 }
 
 void Stack::Clear() {
-    if (!st.empty())
-        st.clear();
+    st.clear();
 }
 
 void Stack::Swap(Stack& other) {
@@ -78,16 +77,16 @@ void Stack::Swap(Stack& other) {
 Stack& Stack::operator=(const Stack& other) {
     if (this == &other)
         return *this;
-    this->st = other.st;
+    st = other.st;
     return *this;
 }
 
 bool Stack::operator==(const Stack& other) const {
-    if (this->st.size() != other.st.size())
+    if (st.size() != other.st.size())
         return false;
 
-    for (size_t i = 0; i < this->Size(); ++i)
-        if (this->st[i] != other.st[i])
+    for (size_t i = 0; i < Size(); ++i)
+        if (st[i] != other.st[i])
             return false;
 
     return true;

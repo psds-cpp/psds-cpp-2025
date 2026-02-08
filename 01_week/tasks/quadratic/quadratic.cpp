@@ -5,45 +5,33 @@
 
 
 void SolveQuadratic(int a, int b, int c) {
-    if (a == 0 && b == 0 && c == 0)
-        std::cout << "infinite solutions";
-    else if (a == 0 && b == 0 && c != 0)
-        std::cout << "no solutions";
-    else if (a == 0 && b != 0 && c == 0)
-        std::cout << "0";
-    else if (a == 0 && b != 0 && c != 0)
-        std::cout << std::setprecision(6) << static_cast<long double>(-c) / b;
-    else if (a != 0 && b == 0 && c == 0)
-        std::cout << "0";
-    else if (a != 0 && b == 0 && c != 0) {
-        if (c > 0)
-            std::cout << "no solutions";
-        else {
-            long double x = sqrt(static_cast<long double>(-c) / a);
-            std::cout << std::setprecision(6) << -x << ' ' << x;
-        }   
-    }
-    else if (a != 0 && b != 0 && c == 0) {
-        long double x = static_cast<long double>(-b) / a;
-        if (x < 0)
-            std::cout << std::setprecision(6) << x << " 0";
-        else
-            std::cout << std::setprecision(6) << "0 " << x;
-    }
-    else {
-        long long d = static_cast<long double>(b)*b - 4LL*a*c;
-        if (d < 0)
-            std::cout << "no solutions";
-        else if (d == 0)
-            std::cout << std::setprecision(6) << static_cast<long double>(-b) / (2.0L*a);
-        else {
-            long double sqrtd = sqrt(d);
-            long double x1 = (static_cast<long double>(-b) + sqrtd) / (2.0L*a);
-            long double x2 = (static_cast<long double>(-b) - sqrtd) / (2.0L*a);
-            if (x1 < x2)
-                std::cout << std::setprecision(6) << x1 << ' ' << x2;
-            else
-                std::cout << std::setprecision(6) << x2 << ' ' << x1;
+    if (a == 0) {
+        if (b == 0) {
+            std::cout << (c == 0 ? "infinite solutions" : "no solutions");
         }
+        else {
+            std::cout << std::setprecision(6) << static_cast<long double>(-c) / b;
+        }
+        return;
     }
+    
+    long long d = static_cast<long long>(b) * b - 4LL * a * c;
+
+    if (d < 0) {
+        std::cout << "no solutions";
+        return;
+    }
+
+    if (d == 0) {
+        std::cout << std::setprecision(6) << static_cast<long double>(-b) / (2.0L * a);
+        return;
+    }
+
+    long double sqrtd = std::sqrt(static_cast<long double>(d));
+    long double x1 = (-b - sqrtd) / (2.0L * a);
+    long double x2 = (-b + sqrtd) / (2.0L * a);
+
+    if (x1 > x2) std::swap(x1, x2);
+    
+    std::cout << std::setprecision(6) << x1 << ' ' << x2;
 }

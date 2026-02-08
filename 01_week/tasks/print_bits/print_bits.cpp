@@ -4,7 +4,7 @@
 
 
 void PrintBits(long long value, size_t bytes) {
-    size_t bits = bytes*8;
+    size_t bits = bytes * 8;
     bool reverse = false;
     bool res[bits] = {0};
 

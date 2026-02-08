@@ -41,13 +41,8 @@ std::ostream& operator<<(std::ostream& os, const CircleRegionList& list) {
     for (size_t i = 0; i < len; ++i) {
         if (i == 0)
             os << "\n\t";
-
         os << list[i];
-
-        if (i != len-1)
-            os << ",\n\t";
-        else
-            os << '\n';
+        (i != len - 1) ? os << ",\n\t" : os << '\n';
     }
     os << '}';
     return os;

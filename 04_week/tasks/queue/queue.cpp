@@ -11,7 +11,7 @@ public:
     Queue(std::stack<int> st);
     Queue(std::vector<int> vec);
     Queue(std::initializer_list<int> list);
-    Queue(int n);
+    Queue(size_t n);
 
     // Методы (объявления)
     size_t Size() const;
@@ -50,14 +50,14 @@ private:
 Queue::Queue() {};
 Queue::Queue(std::stack<int> st) {
     while (!st.empty()) {
-        this->Push(st.top());
+        Push(st.top());
         st.pop();
     }
     std::reverse(in.begin(), in.end());
 }
 Queue::Queue(std::vector<int> vec) : in(vec) {}
 Queue::Queue(std::initializer_list<int> list) : in(list) {}
-Queue::Queue(int n) {
+Queue::Queue(size_t n) {
     in.reserve(n);
     out.reserve(n);
 }
@@ -107,10 +107,8 @@ const int& Queue::Back() const {
 }
 
 void Queue::Clear() {
-    if (!in.empty())
-        in.clear();
-    if (!out.empty())
-        out.clear();
+    in.clear();
+    out.clear();
 }
 
 void Queue::Swap(Queue& other) {
@@ -121,7 +119,7 @@ void Queue::Swap(Queue& other) {
 // Операторы (реализации)
 
 bool Queue::operator==(const Queue& other) const {
-    if ((this->in.size() + this->out.size()) != (other.in.size() + other.out.size()))
+    if ((in.size() + out.size()) != (other.in.size() + other.out.size()))
         return false;
 
     auto getVal = [](const Queue& q, size_t index) {
@@ -130,7 +128,7 @@ bool Queue::operator==(const Queue& other) const {
         return q.in[index - q.out.size()];
     };
 
-    size_t total_size = this->in.size() + this->out.size();
+    size_t total_size = in.size() + out.size();
     for (size_t i = 0; i < total_size; ++i)
         if (getVal(*this, i) != getVal(other, i))
             return false;
