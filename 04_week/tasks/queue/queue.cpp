@@ -7,9 +7,6 @@ class Queue {
     std::vector<int> input;
     std::vector<int> output;
 
-    bool eqArrays(const std::vector<int>& a, const std::vector<int>& b) const;
-    std::vector<int> unionArrays(const std::vector<int>& input, const std::vector<int>& output) const;
-
 public:
     Queue(){};
     Queue(std::vector<int> vector);
@@ -134,35 +131,31 @@ void Queue::Swap(Queue& other){
     other.output = std::move(tmpOutput);
 }
 
-bool Queue::eqArrays(const std::vector<int>& a, const std::vector<int>& b) const{
-    if (a.size() != b.size()){ return false; }
-    if (a.empty() && b.empty()){ return true; }
+bool Queue::operator==(const Queue& other) const {
+    // Быстрая проверка на размер
+    if ((input.size() + output.size()) != (other.input.size() + other.output.size())) {
+        return false;
+    }
 
-    for (size_t i = 0; i < a.size(); ++i) {
-        if (a[i] != b[i]) {
+    // Вспомогательная функция для получения элемента по индексу в "виртуальном" векторе
+    auto getElement = [](const Queue& q, size_t index) {
+        // Сначала идут элементы из output в обратном порядке
+        if (index < q.output.size()) {
+            return q.output[q.output.size() - 1 - index];
+        }
+        // Затем элементы из input в прямом порядке
+        return q.input[index - q.output.size()];
+    };
+
+    // Поэлементное сравнение без выделения памяти
+    size_t totalSize = input.size() + output.size();
+    for (size_t i = 0; i < totalSize; ++i) {
+        if (getElement(*this, i) != getElement(other, i)) {
             return false;
         }
     }
+
     return true;
-}
-
-std::vector<int> Queue::unionArrays(const std::vector<int>& input, const std::vector<int>& output) const {
-    std::vector<int> unionArray;
-    unionArray.reserve(input.size() + output.size()); 
-    
-    for (auto it = output.rbegin(); it != output.rend(); ++it) {
-        unionArray.push_back(*it);
-    }
-
-    for (size_t i=0; i < input.size(); ++i){
-        unionArray.push_back(input[i]);
-    }
-
-    return unionArray;
-}
-
-bool Queue::operator==(const Queue& other) const {
-    return eqArrays(unionArrays(input, output), unionArrays(other.input, other.output));
 }
 
 bool Queue::operator!=(const Queue& other) const {
