@@ -3,45 +3,43 @@
 
 
 size_t CharChanger(char array[], size_t, char delimiter = ' ') {
-    int counter = 0; // Счётчик повторяющихся символов
+    int counterRepeatedSymbols = 1; // Счётчик повторяющихся символов
     int pos_write = 0;   // Индекс для записи обработанного символа
-    int pos_read = 0;    // Индекс для чтения следующего элемента из массива
-    char repeating_symbol = array[pos_read]; // В процессе выполнения - предыдущий символ после pos_read(отслеживаем повторения)
+    char repeating_symbol = array[0]; // В процессе выполнения - предыдущий символ(отслеживаем повторения)
 
-    while (repeating_symbol != '\0'){
-        if (repeating_symbol == array[pos_read]){
-            ++counter;
+    for (char* ptr = array + 1; repeating_symbol != '\0'; ++ptr) {
+        if (repeating_symbol == *ptr){
+            ++counterRepeatedSymbols;
+            continue;
+        } 
+
+        if (isalpha(repeating_symbol)){
+            array[pos_write] = toupper(repeating_symbol);
+        } else if (isdigit(repeating_symbol)){
+            array[pos_write] = '*';
+        } else if (repeating_symbol == ' '){
+            array[pos_write] = delimiter;
         } else {
-            if (isalpha(repeating_symbol)){
-                array[pos_write] = toupper(repeating_symbol);
-            } else if (isdigit(repeating_symbol)){
-                array[pos_write] = '*';
-            } else if (repeating_symbol == ' '){
-                array[pos_write] = delimiter;
-            } else {
-                array[pos_write] = '_';
-            }
+            array[pos_write] = '_';
+        }
+        ++pos_write;
 
-            ++pos_write;
 
-            if (repeating_symbol == ' ') {
-                counter = 1;
-            }
-
-            if (counter >= 10){
-                counter = 0;
-            }
-
-            if (counter != 1){
-                array[pos_write] = static_cast<char>(counter + '0'); // Преобразуем число в символ
-                counter = 1;
-                ++pos_write;
-            }
-
-            repeating_symbol = array[pos_read];
+        if (repeating_symbol == ' ') {
+            counterRepeatedSymbols = 1;
         }
 
-        ++pos_read;
+        if (counterRepeatedSymbols >= 10){
+            counterRepeatedSymbols = 0;
+        }
+
+        if (counterRepeatedSymbols != 1){
+            array[pos_write] = static_cast<char>(counterRepeatedSymbols + '0'); // Преобразуем число в символ
+            counterRepeatedSymbols = 1;
+            ++pos_write;
+        }
+
+        repeating_symbol = *ptr;
     }
 
     array[pos_write] = '\0';
