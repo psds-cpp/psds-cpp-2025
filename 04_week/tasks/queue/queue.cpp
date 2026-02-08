@@ -123,12 +123,8 @@ void Queue::Clear(){
 }
 
 void Queue::Swap(Queue& other){
-    std::vector<int> tmpInput = std::move(input);
-    std::vector<int> tmpOutput = std::move(output);
-    input = std::move(other.input);
-    output = std::move(other.output);
-    other.input = std::move(tmpInput);
-    other.output = std::move(tmpOutput);
+    std::swap(input, other.input);
+    std::swap(output, other.output);
 }
 
 bool Queue::operator==(const Queue& other) const {
