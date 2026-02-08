@@ -6,7 +6,7 @@ struct DataStats {
     double sd = 0.0;
 };
 
-DataStats CalculateDataStats(std::vector<int> numArray) {
+DataStats CalculateDataStats(const std::vector<int>& numArray) {
     double average = 0.0;
     double standardDeviation = 0.0;
 
