@@ -6,6 +6,7 @@ std::vector<int> Unique(const std::vector<int>& input_vector) {
     }
     
     std::vector<int> result;
+    result.reserve(input_vector.size());
     result.push_back(input_vector[0]);
     for (size_t i = 1; i < input_vector.size(); ++i) {
         if (input_vector[i] != input_vector[i-1]) {
