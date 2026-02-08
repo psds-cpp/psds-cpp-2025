@@ -21,7 +21,7 @@ DataStats CalculateDataStats(const std::vector<int>& data) {
     res.avg /= size;
     res.sd /= size;
     res.sd -= res.avg * res.avg;
-    res.sd = sqrt(res.sd);
+    res.sd = std::sqrt(res.sd);
 
     return res;
 }

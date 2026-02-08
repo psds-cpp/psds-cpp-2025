@@ -1,3 +1,4 @@
+#include <tuple>
 
 struct Date {
     unsigned year = 0;
@@ -35,19 +36,7 @@ bool operator>=(const Date& lhs, const Date& rhs){
 }
 
 bool operator<(const StudentInfo& lhs, const StudentInfo& rhs){
-    if(lhs.mark != rhs.mark){
-        return lhs.mark > rhs.mark;
-    }
-    if(lhs.score != rhs.score){
-        return lhs.score < rhs.score;
-    }
-    if(lhs.course != rhs.course){
-        return lhs.course > rhs.course;
-    }
-    if(lhs.birth_date != rhs.birth_date){
-        return lhs.birth_date < rhs.birth_date;
-    }
-    return false;
+    return std::tie(rhs.mark, lhs.score, rhs.course, lhs.birth_date) < std::tie(lhs.mark, rhs.score, lhs.course, rhs.birth_date);
 }
 
 bool operator==(const StudentInfo& lhs, const StudentInfo& rhs){
