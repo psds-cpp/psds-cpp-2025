@@ -4,8 +4,8 @@
 
 size_t CharChanger(char array[], size_t, char delimiter = ' ') {
     int counter = 0; // Счётчик повторяющихся символов
-    int write = 0;   // Указатель для записи обработанного символа
-    int read = 0;    // Указатель для чтения следующего элемента из массива
+    int pos_write = 0;   // Индекс для записи обработанного символа
+    int pos_read = 0;    // Индекс для чтения следующего элемента из массива
     char repeating_symbol = array[read]; // В процессе выполнения - редыдущий символ после read(отслеживаем повторения)
 
     while (repeating_symbol != '\0'){
