@@ -1,7 +1,5 @@
 #include <cstdint>
 #include <iostream>
-#include <vector>
-#include <string>
 
 
 enum class CheckFlags : uint8_t {
@@ -26,32 +24,37 @@ void PrintCheckFlags(CheckFlags flags) {
         return;
     }
 
-    std::vector<std::string> set_flags;
+    std::cout << "[";
+    bool first = true;
     if ((static_cast<uint8_t>(flags) & static_cast<uint8_t>(CheckFlags::TIME)) != 0) {
-        set_flags.push_back("TIME");
+        if (!first) std::cout << ",";
+        std::cout << "TIME";
+        first = false;
     }
     if ((static_cast<uint8_t>(flags) & static_cast<uint8_t>(CheckFlags::DATE)) != 0) {
-        set_flags.push_back("DATE");
+        if (!first) std::cout << ",";
+        std::cout << "DATE";
+        first = false;
     }
     if ((static_cast<uint8_t>(flags) & static_cast<uint8_t>(CheckFlags::USER)) != 0) {
-        set_flags.push_back("USER");
+        if (!first) std::cout << ",";
+        std::cout << "USER";
+        first = false;
     }
     if ((static_cast<uint8_t>(flags) & static_cast<uint8_t>(CheckFlags::CERT)) != 0) {
-        set_flags.push_back("CERT");
+        if (!first) std::cout << ",";
+        std::cout << "CERT";
+        first = false;
     }
     if ((static_cast<uint8_t>(flags) & static_cast<uint8_t>(CheckFlags::KEYS)) != 0) {
-        set_flags.push_back("KEYS");
+        if (!first) std::cout << ",";
+        std::cout << "KEYS";
+        first = false;
     }
     if ((static_cast<uint8_t>(flags) & static_cast<uint8_t>(CheckFlags::DEST)) != 0) {
-        set_flags.push_back("DEST");
-    }
-
-    std::cout << "[";
-    for (size_t i = 0; i < set_flags.size(); ++i) {
-        std::cout << set_flags[i];
-        if (i < set_flags.size() - 1) {
-            std::cout << ",";
-        }
+        if (!first) std::cout << ",";
+        std::cout << "DEST";
+        first = false;
     }
     std::cout << "]";
 }
