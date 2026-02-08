@@ -45,3 +45,26 @@ MinMax(const std::vector<int>& vec) {
     
     return {min_it, max_it};
 }
+
+
+// using Iterator = std::vector<int>::iterator;
+
+// std::pair<Iterator, Iterator> MinMax(std::vector<int>& v) {
+//     if (v.empty()) {
+//         return {v.end(), v.end()};
+//     }
+    
+//     auto min_it = v.begin();    // обычный iterator
+//     auto max_it = v.begin();
+    
+//     for (auto it = v.begin() + 1; it != v.end(); ++it) {
+//         if (*it <= *min_it) {
+//             min_it = it;
+//         } else if (*it >= *max_it) {
+//             max_it = it;
+//         }
+//     }
+    
+//     return {min_it, max_it};
+// }
+
