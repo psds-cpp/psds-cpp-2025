@@ -44,6 +44,6 @@ size_t CharChanger(char array[], size_t, char delimiter = ' ') {
         ++pos_read;
     }
 
-    array[write] = '\0';
-    return write;     
+    array[pos_write] = '\0';
+    return pos_write;     
 }
