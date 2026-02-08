@@ -11,7 +11,7 @@ const int* FindLastElement(const int* begin, const int* end, funcPtr predicate) 
         return end;
     }
 
-    const int* last_element = nullptr;
+    const int* last_element = end;
 
     while (begin < end)
     {
@@ -20,10 +20,6 @@ const int* FindLastElement(const int* begin, const int* end, funcPtr predicate) 
         }
 
         ++begin;
-    }
-
-    if (last_element == nullptr){
-        return end;
     }
     
     return last_element;
