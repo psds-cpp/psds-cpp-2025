@@ -15,11 +15,10 @@ const int* FindLastElement(const int* begin, const int* end, funcPtr predicate) 
 
     while (begin < end)
     {
-        if (predicate(*begin)){
-            last_element = begin;
+        --end;
+        if (predicate(*end)){
+            return end;
         }
-
-        ++begin;
     }
     
     return last_element;
