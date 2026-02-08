@@ -22,9 +22,7 @@ char* FindLongestSubsequence(const char* begin, const char* end, size_t &count) 
             }
             
             length = 0;
-            while (left != right){
-                ++left;
-            }
+            left = right;
         }
     }
 
