@@ -59,19 +59,11 @@ void Stack::Clear(){
 }
 
 void Stack::Swap(Stack& other){
-    Stack tmp = std::move(*this);
-    *this = std::move(other);
-    other = std::move(tmp);
+    std::swap((*this).stack, other.stack);
 }
 
 bool Stack::operator==(const Stack& other) const {
-    if (Size() != other.Size()){ return false; }
-    for (int i = 0; i < Size(); ++i) {
-        if (stack[i] != other.stack[i]) {
-            return false;
-        }
-    }
-    return true;
+    return ((*this).stack == other.stack);
 }
 
 bool Stack::operator!=(const Stack& other) const {
