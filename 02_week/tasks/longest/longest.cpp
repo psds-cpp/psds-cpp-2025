@@ -1,4 +1,4 @@
-char* FindLongestSubsequence(const char* begin, const char* end, size_t &count) {
+const char* FindLongestSubsequence(const char* begin, const char* end, size_t &count) {
     if (begin == nullptr || end == nullptr || begin >= end){
         count = 0;
         return nullptr;
@@ -32,5 +32,16 @@ char* FindLongestSubsequence(const char* begin, const char* end, size_t &count) 
     }
 
     count = max_length;
-    return const_cast<char*>(startOfSubsequence);
+    return startOfSubsequence;
+}
+
+char* FindLongestSubsequence(char* begin, char* end, size_t &count) {
+    // Вызываем константную версию
+    const char* result = FindLongestSubsequence(
+        const_cast<const char*>(begin), 
+        const_cast<const char*>(end), 
+        count
+    );
+    // Снимаем константность
+    return const_cast<char*>(result);
 }
