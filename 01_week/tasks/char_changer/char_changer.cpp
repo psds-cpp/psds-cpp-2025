@@ -10,7 +10,7 @@ size_t CharChanger(char array[], size_t, char delimiter = ' ') {
 
     while (repeating_symbol != '\0'){
         if (repeating_symbol == array[read]){
-            counter++;
+            ++counter;
         } else {
             if (isalpha(repeating_symbol)){
                 array[write] = toupper(repeating_symbol);
@@ -22,7 +22,7 @@ size_t CharChanger(char array[], size_t, char delimiter = ' ') {
                 array[write] = '_';
             }
 
-            write++;
+            ++write;
 
             if (repeating_symbol == ' ') {
                 counter = 1;
@@ -35,13 +35,13 @@ size_t CharChanger(char array[], size_t, char delimiter = ' ') {
             if (counter != 1){
                 array[write] = static_cast<char>(counter + '0'); // Преобразуем число в символ
                 counter = 1;
-                write++;
+                ++write;
             }
 
             repeating_symbol = array[read];
         }
 
-        read++;
+        ++read;
     }
 
     array[write] = '\0';
