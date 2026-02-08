@@ -77,82 +77,35 @@ RingBuffer::RingBuffer(const std::initializer_list<int>& list) : RingBuffer(list
     }
 }
 
-void RingBuffer::Push(const int& value){
-    if (size == 0){ 
-        end = 0;
-        buffer[end] = value; 
-        ++size;
-    } else {
-        if (end < capacity-1){
-            if (size < capacity){ ++size; }
-            ++end;
-            buffer[end] = value;
-        } else if (end == capacity-1 && size != capacity){
-            ++size;
-            end = 0;
-            buffer[end] = value;
-        } else if (end == capacity-1 && size == capacity){
-            end = 0;
-            buffer[end] = value;
-        }
-
-        if (end == begin && begin != capacity-1){
-            ++begin; 
-        } else if (end == begin && begin == capacity-1){
-            begin = 0;
-        }
+bool RingBuffer::TryPush(const int& value) {
+    if (Full()) return false;
+    
+    if (!Empty()) {
+        end = (end + 1) % capacity;
     }
-}
-
-bool RingBuffer::TryPush(const int& value){
-    if (size == 0){ 
-        end = 0;
-        buffer[end] = value; 
-        ++size;
-    } else {
-        if (end < capacity-1 && end+1 != begin){
-            ++size;
-            ++end;
-            buffer[end] = value;
-        } else if (end == capacity-1 && size != capacity){ // && begin != 0
-            ++size;
-            end = 0;
-            buffer[end] = value;
-        } else {
-            return false;
-        }
-    }
-
+    buffer[end] = value;
+    ++size;
     return true;
 }
 
-void RingBuffer::Pop(){
-    if (size > 0){
-        if (begin+1 <= end){
-            ++begin; 
-        } else {
-            begin = 0;
-        }
-        --size;
-
+void RingBuffer::Push(const int& value) {
+    if (Full()) {
+        Pop();
     }
-
+    TryPush(value);
 }
 
-bool RingBuffer::TryPop(int& value){
-    if (size > 0){
-        value = buffer[begin];
+bool RingBuffer::TryPop(int& value) {
+    if (Empty()) return false;
+    value = buffer[begin];
+    begin = (begin + 1) % capacity;
+    --size;
+    return true;
+}
 
-        if (begin+1 <= end){
-            ++begin; 
-        } else {
-            begin = 0;
-        }
-        --size;
-        return true;
-    }
-
-    return false;
+void RingBuffer::Pop() {
+    int trash;
+    TryPop(trash);
 }
 
 int& RingBuffer::operator[](const size_t& idx) {
