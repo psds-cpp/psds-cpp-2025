@@ -1,8 +1,5 @@
 #include <cstdint>
-#include <vector>
 #include <iostream>
-#include <string>
-#include <sstream>
 
 enum class CheckFlags : uint8_t {
     NONE = 0,
@@ -60,7 +57,6 @@ CheckFlags operator~(CheckFlags a) {
 
 std::ostream& operator<<(std::ostream& os, CheckFlags flags) {
     uint8_t flags_val = static_cast<uint8_t>(flags);
-    
     uint8_t valid_flags = flags_val & static_cast<uint8_t>(CheckFlags::ALL);
     
     if (valid_flags == 0) {
@@ -68,32 +64,36 @@ std::ostream& operator<<(std::ostream& os, CheckFlags flags) {
         return os;
     }
 
-    std::vector<std::string> flag_names;
-    
+    bool first = true;
     if ((valid_flags & static_cast<uint8_t>(CheckFlags::TIME)) != 0) {
-        flag_names.push_back("TIME");
+        if (!first) os << ", ";
+        os << "TIME";
+        first = false;
     }
     if ((valid_flags & static_cast<uint8_t>(CheckFlags::DATE)) != 0) {
-        flag_names.push_back("DATE");
+        if (!first) os << ", ";
+        os << "DATE";
+        first = false;
     }
     if ((valid_flags & static_cast<uint8_t>(CheckFlags::USER)) != 0) {
-        flag_names.push_back("USER");
+        if (!first) os << ", ";
+        os << "USER";
+        first = false;
     }
     if ((valid_flags & static_cast<uint8_t>(CheckFlags::CERT)) != 0) {
-        flag_names.push_back("CERT");
+        if (!first) os << ", ";
+        os << "CERT";
+        first = false;
     }
     if ((valid_flags & static_cast<uint8_t>(CheckFlags::KEYS)) != 0) {
-        flag_names.push_back("KEYS");
+        if (!first) os << ", ";
+        os << "KEYS";
+        first = false;
     }
     if ((valid_flags & static_cast<uint8_t>(CheckFlags::DEST)) != 0) {
-        flag_names.push_back("DEST");
-    }
-    
-    for (size_t i = 0; i < flag_names.size(); ++i) {
-        os << flag_names[i];
-        if (i < flag_names.size() - 1) {
-            os << ", ";
-        }
+        if (!first) os << ", ";
+        os << "DEST";
+        first = false;
     }
     
     return os;
