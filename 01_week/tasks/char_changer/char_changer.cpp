@@ -2,16 +2,13 @@
 #include <stdexcept>
 #include <cctype>
 
-const char a = 'a';
-const char A = 'A';
-const char dif_letters = static_cast<int>(a) - static_cast<int>(A);
+const char dif_letters = 'a' - 'A';
 
 size_t CharChanger(char array[], size_t size, char delimiter = ' ') {
     size_t count = 1, last_ind = size - 1;
     size_t start_rep_ind, end_rep_ind;
 
     for (size_t i = 0; i < size; ++i) {
-
         if (i == size - 1) {
             return last_ind;
         }
@@ -19,7 +16,7 @@ size_t CharChanger(char array[], size_t size, char delimiter = ' ') {
         if (array[i] == array[i + 1]) {
             if (count == 1) start_rep_ind = i;
             count++;
-            
+                        
             if (array[i] == ' ') continue;
         }
         else if (count != 1) {
@@ -27,7 +24,6 @@ size_t CharChanger(char array[], size_t size, char delimiter = ' ') {
             i = start_rep_ind;
 
             size_t ind_next_simbol = i + 2;
-
             last_ind -= count - 2;
 
             if (array[i] != ' ') {
@@ -37,7 +33,6 @@ size_t CharChanger(char array[], size_t size, char delimiter = ' ') {
             else {
                 --ind_next_simbol;
                 --last_ind;
-
                 array[i] = delimiter;
             }
 
@@ -48,22 +43,20 @@ size_t CharChanger(char array[], size_t size, char delimiter = ' ') {
 
             size_t reduct_size = end_rep_ind - start_rep_ind;
             size -= reduct_size - 2;
-
             count = 1;
-            
             continue;
         }
 
-        if (static_cast<bool>(std::isdigit(array[i]))) {
+        if (std::isdigit(array[i])) {
             array[i] = '*';
         }
-        else if (static_cast<bool>(std::islower(array[i]))) {
+        else if (std::islower(array[i])) {
             array[i] -= dif_letters;
         }
-        else if (static_cast<bool>(std::ispunct(array[i]))) {
+        else if (std::ispunct(array[i])) {
             array[i] = '_';
         }
-        else if (static_cast<bool>(std::isspace(array[i]))) {
+        else if (std::isspace(array[i])) {
             array[i] = delimiter;
         }
     }

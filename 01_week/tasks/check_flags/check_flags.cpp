@@ -23,13 +23,22 @@ void PrintCheckFlags(CheckFlags flags) {
     bool the_first = true;
     std::string str_flags = "[";
 
-    if (static_cast<int8_t>(flags) &
-        static_cast<int8_t>(CheckFlags::TIME)) {
+    size_t max_value_flag = 32;
+    for (size_t i = 0; i < max_value_flag; i >>= 1) {
+        auto b_i = static_cast<uint8_t>(flags) >> i & 1u;
+        if (b_i) {
+
+            
+        } 
+    }
+
+    if (static_cast<uint8_t>(flags) &
+        static_cast<uint8_t>(CheckFlags::TIME)) {
         str_flags += "TIME";
         the_first = false;
     }
-    if (static_cast<int8_t>(flags) &
-        static_cast<int8_t>(CheckFlags::DATE)) {
+    if (static_cast<uint8_t>(flags) &
+        static_cast<uint8_t>(CheckFlags::DATE)) {
         the_first ? str_flags += "DATE" : str_flags += ",DATE";
         the_first = false;
     }

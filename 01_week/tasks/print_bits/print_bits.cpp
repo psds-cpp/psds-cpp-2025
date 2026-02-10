@@ -2,24 +2,16 @@
 #include <algorithm>
 
 void PrintBits(long long value, size_t bytes) {
-    std::string str_bset = "";
-    
-    auto bits = bytes * 8;
+    auto count_bits = bytes * 8;
+    std::string str_bset = "0b";
 
-    for (size_t i = 0; i < bits; ++i) {
-        auto b_i = (value >> i) & 1u;
+    for (size_t i = count_bits; i > 0; --i) {
+        auto b_i = (value >> (i - 1)) & 1u;
+        b_i ? str_bset += "1" : str_bset += "0";
 
-        if (static_cast<bool>(b_i)) str_bset += "1";
-        else str_bset += "0";
-
-        if (i % 4 == 3 && i != bits - 1) {
+        if ((i - 1) % 4 == 0 && i != count_bits && i != 1) {
             str_bset += '\'';
         }
-    }
-
-    str_bset += "b0";
-    
-    std::reverse(str_bset.begin(), str_bset.end());
-    
+    }    
     std::cout << str_bset << "\n";
 }
