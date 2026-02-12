@@ -31,7 +31,6 @@ public:
         
         tempStr_ = std::move(str);
 
-
         if (len == npos || start + len > tempStr_->size()) {
             len = tempStr_->size() - start;
         } 
@@ -71,7 +70,7 @@ public:
     void RemoveSuffix(size_t len);
     StringView Substr(size_t start, size_t len) const;
     size_t Find(char symbol, size_t start) const;
-    size_t Find(StringView str, size_t start) const;
+    size_t Find(const StringView& str, size_t start) const;
     std::string ToString() const;
     
 private:
@@ -161,7 +160,7 @@ size_t StringView::Find(char symbol, size_t start = 0) const {
     return pos - begin_;
 }
 
-size_t StringView::Find(StringView str, size_t start = 0) const {
+size_t StringView::Find(const StringView& str, size_t start = 0) const {
     if (start > Size() || str.Size() > Size() || Empty()) {
         return npos;
     }

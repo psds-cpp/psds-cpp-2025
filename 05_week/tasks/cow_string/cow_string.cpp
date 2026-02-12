@@ -38,8 +38,7 @@ public:
 
     CowString(const std::string& str) : cowString_(new CowStringData(str)) {}
 
-    CowString(const CowString& other) {
-        cowString_ = other.cowString_;
+    CowString(const CowString& other) : cowString_(other.cowString_){
         if (cowString_) {
             ++cowString_->refCount;
         }
@@ -176,7 +175,7 @@ size_t CowString::Find(const char* str, size_t start = 0) const {
 }
 
 CowString& CowString::Append(const char* str) {
-    if (!str) {
+    if (!str || str[0] == '\0') {
         return *this;
     }
 
@@ -236,14 +235,18 @@ CowString CowString::Substr(size_t start = 0, size_t len = npos) {
         return CowString(*this);
     }
 
+    if (start > cowString_->size) {
+        return CowString();
+    }
+
     if (len > cowString_->size) {
         len = cowString_->size;
     }
 
-    size_t substrSize = len - start;
+    size_t substrSize = std::min(len, cowString_->size - start);
 
     char* subStr = new char[substrSize + 1];
-    std::strncpy(subStr, &cowString_->data[start], substrSize);
+    std::strncpy(subStr, cowString_->data + start, substrSize);
     subStr[substrSize] = '\0';
 
     CowString subCowStr;
