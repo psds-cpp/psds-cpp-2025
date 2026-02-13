@@ -54,12 +54,12 @@ public:
   static size_t dtor; // - количество вызовов деструктора
   static size_t alive; // - количество живых объектов в данный момент
 
-  Trice(): id_(++count), name_ ("obj_" + (std::to_string(count+1))){
+  Tracer(): id_(++count), name_ ("obj_" + (std::to_string(count+1))){
       ++default_ctor;
       ++alive;
   }
 
-  Trice(const std::string data): id_(++count), name_ (data +"_" + (std::to_string(count+1))){
+  Tracer(const std::string data): id_(++count), name_ (data +"_" + (std::to_string(count+1))){
       ++default_ctor;
       ++alive;
   }
@@ -76,7 +76,7 @@ public:
     move_assign = 0;
     dtor = 0;
     alive = 0;
-}
+  }
 
 private:
     std::string name_;
