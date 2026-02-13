@@ -37,7 +37,7 @@ private:
     size_t size_;
 
 public:
-    
+
     StringView() : data_(nullptr), size_(0) {}    // Конструктор по умолчанию
 
 /*
@@ -115,11 +115,11 @@ char Back() const { return data_[size_ -1]; }
     void RemoveSuffix(size_t n) { size_ -= n; }
 
 //   Метод Substr - может принимать позицию начала поиска и количество элементов и возвращает StringView. В случае, когда подстрока начала поиска превышает длину строки, следует вернуть пустое представление
-    StringView Substr(size_t pos = 0, size_t len = -1) const {
+    StringView Substr(size_t pos = 0, size_t len = static_cast<size_t>(-1)) const {
         if (pos >= size_) { return StringView(); }  // В случае, когда подстрока начала поиска превышает длину строки, следует вернуть пустое представление
         
         size_t newSize = size_ - pos;
-        if ((len != -1) && (len < newSize)) newSize = count;
+        if ((len != static_cast<size_t>(-1)) && (len < newSize)) newSize = count;
         
         return StringView(data_ + pos, newSize);
     }
@@ -131,13 +131,13 @@ char Back() const { return data_[size_ -1]; }
             if (data_[i] == symb) return i;
         }
         
-        return -1;  //не совпало
+        return static_cast<size_t>(-1);  //не совпало
     }
 // переопределение Find ддля строки
     size_t Find(const StringView& str, size_t pos = 0) const {
-        if ((pos >= size_) || ((pos + sv.ize_) >= size_)) return -1;
+        if ((pos >= size_) || ((pos + str.ize_) >= size_)) return static_cast<size_t>(-1);
         
-        if (str.Empty()) return -1;    
+        if (str.Empty()) return static_cast<size_t>(-1);    
 
         size_t i = pos;    // индекс проверяемой позиции
         size_t j = 0;      // счетчик совпадений
@@ -152,7 +152,7 @@ char Back() const { return data_[size_ -1]; }
           i++;
         }
         
-        return -1;
+        return static_cast<size_t>(-1);
     }
 
     // Преобразование в std::string
