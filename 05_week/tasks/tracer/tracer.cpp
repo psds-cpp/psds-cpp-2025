@@ -42,4 +42,55 @@ alive - количество живых объектов в данный мом�
 
 class Tracer {
 
+public:
+  // static для переменных, тогда при вызове значение будет известно предыдущее значение. 
+  static size_t count; //- общее количество созданных объектов (используется для генерации id)
+  static size_t default_ctor; // - количество вызовов конструктора по умолчанию
+  static size_t str_ctor; // - количество вызовов конструктора от строки
+  static size_t copy_ctor; // - количество вызовов конструктора копирования
+  static size_t move_ctor; // - количество вызовов конструктора перемещения
+  static size_t copy_assign; // - количество вызовов оператора копирующего присваивания
+  static size_t move_assign; // - количество вызовов оператора перемещающего присваивания
+  static size_t dtor; // - количество вызовов деструктора
+  static size_t alive; // - количество живых объектов в данный момент
+
+  Trice(): id_(++count), name_ ("obj_" + (std::to_string(count+1))){
+      ++default_ctor;
+      ++alive;
+  }
+
+  Trice(const std::string data): id_(++count), name_ (data +"_" + (std::to_string(count+1))){
+      ++default_ctor;
+      ++alive;
+  }
+
+  
+
+  void ResetStats() {
+    count = 0;
+    default_ctor = 0;
+    str_ctor = 0;
+    copy_ctor = 0;
+    move_ctor = 0;
+    copy_assign = 0;
+    move_assign = 0;
+    dtor = 0;
+    alive = 0;
+}
+
+private:
+    std::string name_;
+    size_t id_;
 };
+
+
+// Инициализация статических членов класса
+size_t Tracer::count = 0;
+size_t Tracer::default_ctor = 0;
+size_t Tracer::str_ctor = 0;
+size_t Tracer::copy_ctor = 0;
+size_t Tracer::move_ctor = 0;
+size_t Tracer::copy_assign = 0;
+size_t Tracer::move_assign = 0;
+size_t Tracer::dtor = 0;
+size_t Tracer::alive = 0;
