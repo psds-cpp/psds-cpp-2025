@@ -109,8 +109,14 @@ char Back() const { return data_[size_ -1]; }
 
 //   Метод RemovePrefix - убирает заданное количество символов из начала представления 
     void RemovePrefix(size_t len) {  // по идее тут надо проверить кооректность, а именно что длина должна быть меньше size_ len 
-        data_ += len;
-        size_ -= len;
+        if (len >= size_) {
+            data_ = nullptr;
+            size_ = 0;
+        } 
+        else {
+            data_ += len;
+            size_ -= len;
+        }
     }
 
 //   Метод RemoveSuffix - убирает заданное количество символов с конца представления
@@ -150,7 +156,7 @@ char Back() const { return data_[size_ -1]; }
           if(str.data_[j] == data_[i])  j++;  // элементы совпали, инкриментируем счетчик совпадений
           else                         j = 0;
 
-          if(j == str.size_)  return i;  // длина строки совпала с количеством совпадений, значит нашли совпадение
+          if(j == str.size_)  return i-j;  // длина строки совпала с количеством совпадений, значит нашли совпадение
           
           i++;
         }
