@@ -48,6 +48,7 @@ public:
         size_ = count;
     }
 
+    // Методы и операторы
     char operator[](size_t index) const {
         return data_[index];
     }
@@ -100,8 +101,7 @@ public:
             return StringView();
         }
         
-        size_t remaining = size_ - pos;
-        size_t new_size = (count != npos && count < remaining) ? count : remaining;
+        size_t new_size = (count != npos && count < (size_ - pos)) ? count : (size_ - pos);
         
         return StringView(data_ + pos, new_size);
     }
@@ -121,33 +121,18 @@ public:
 
     size_t Find(const StringView& sv, size_t pos = 0) const {
         if (sv.Empty()) {
-
-            if (Empty()) {
-                return npos;
-            }
-            if (pos <= size_) {
-                return pos;
-            }
+            return (Empty() || pos > size_) ? npos : pos;
+        }
+        if (Empty() || pos >= size_ || sv.Size() > size_ - pos) {
             return npos;
         }
-        
-        if (Empty() || pos >= size_) {
-            return npos;
-        }
-        
-        if (sv.Size() > size_ - pos) {
-            return npos;
-        }
-        
+    
         for (size_t i = pos; i <= size_ - sv.Size(); ++i) {
-            bool found = true;
-            for (size_t j = 0; j < sv.Size(); ++j) {
-                if (data_[i + j] != sv[j]) {
-                    found = false;
-                    break;
-                }
+            size_t j = 0;
+            while (j < sv.Size() && data_[i + j] == sv[j]) {
+                ++j;
             }
-            if (found) {
+            if (j == sv.Size()) {
                 return i;
             }
         }
