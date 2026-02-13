@@ -59,12 +59,12 @@ public:
   static size_t dtor; // - количество вызовов деструктора
   static size_t alive; // - количество живых объектов в данный момент
 
-  Tracer(): id_(++count), name_ ("obj_" + (std::to_string(count+1))){
+  Tracer(): id_(++count), name_ ("obj_" + (std::to_string(count))){
       ++default_ctor;
       ++alive;
   }
 
-  Tracer(const std::string data): id_(++count), name_ (data +"_" + (std::to_string(count+1))){
+  Tracer(const std::string data): id_(++count), name_ (data +"_" + (std::to_string(count))){
       ++default_ctor;
       ++alive;
   }
