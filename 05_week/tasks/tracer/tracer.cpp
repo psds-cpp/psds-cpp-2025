@@ -74,7 +74,7 @@ public:
       ++alive;
   }
 
-  Tracer(Tracer&& other) : id_(++count), name_(std::move(data.name_)){
+  Tracer(Tracer&& data) : id_(++count), name_(std::move(data.name_)){
         ++move_ctor;
         ++alive;
     }
@@ -89,7 +89,7 @@ public:
     
     Tracer& operator=(Tracer&& data) {    // перемещает имя, не изменяет id
         if (this != &data) {
-            name_ = std::move(other.name_);
+            name_ = std::move(data.name_);
             ++move_assign;
         }
         return *this;
