@@ -70,7 +70,7 @@ public:
   }
 
   Tracer(const Tracer& data) : id_(++count), name_(data.name_) {
-      ++copy_ctor;
+      ++move_ctor;
       ++alive;
   }
 
