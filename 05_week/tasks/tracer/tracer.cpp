@@ -69,9 +69,18 @@ public:
       ++alive;
   }
 
-  
+    // Деструктор
+    ~Tracer() {
+        ++dtor;
+        --alive;
+    }
+    
+    // Методы доступа
+    size_t Id() const { return id_; }
+    const std::string& Name() const { return name_; }
+    const char* Data() const { return name_.c_str(); }
 
-  void ResetStats() {
+  static void ResetStats() {
     count = 0;
     default_ctor = 0;
     str_ctor = 0;
