@@ -118,10 +118,10 @@ char Back() const { return data_[size_ -1]; }
     StringView Substr(size_t pos = 0, size_t len = -1) const {
         if (pos >= size_) { return StringView(); }  // В случае, когда подстрока начала поиска превышает длину строки, следует вернуть пустое представление
         
-        size_ = size_ - pos;
-        if ((len != -1) && (len < new_size)) size_ = count;
+        size_t newSize = size_ - pos;
+        if ((len != -1) && (len < newSize)) newSize = count;
         
-        return StringView(data_ + pos, size_);
+        return StringView(data_ + pos, newSize);
     }
 //   Метод Find - принимает символ или StringView и позицию начала поиска (по умолчанию 0), возвращает позицию начала совпадения элемента (или аналог std::string::npos)
 
@@ -139,8 +139,8 @@ char Back() const { return data_[size_ -1]; }
         
         if (str.Empty()) return -1;    
 
-        siz_t i = pos;    // индекс проверяемой позиции
-        siz_t j = 0;      // счетчик совпадений
+        size_t i = pos;    // индекс проверяемой позиции
+        size_t j = 0;      // счетчик совпадений
 
         while(i < size_)  // првоеряемая должна быть меньше размера строки
         {
