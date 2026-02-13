@@ -53,11 +53,12 @@ public:
           size_ = 0;
           return;
       }
-
+      
       data_ = str.data() + pos;
-      // проверка, что длина + позиция не выходят за размер строки
-      if(len+pos >= str.size()) size_ = str.size() - pos;  // вышли, обризаем длину
-      else                      size_ =  len;
+    
+      size_t maxLen = str.size() - pos;
+      if ((len == npos) || (len > maxLen)) size_ = maxLen;  // вышли, обризаем длину
+      else  size_ = len;
   }
 
 //Конструктор от C-строки
@@ -120,7 +121,14 @@ char Back() const { return data_[size_ -1]; }
     }
 
 //   Метод RemoveSuffix - убирает заданное количество символов с конца представления
-    void RemoveSuffix(size_t n) { size_ -= n; }
+    void RemoveSuffix(size_t len) { 
+        if (len >= size_) {
+            data_ = nullptr;
+            size_ = 0;
+        } 
+        else    size_ -= len;
+        
+    }
 
 //   Метод Substr - может принимать позицию начала поиска и количество элементов и возвращает StringView. В случае, когда подстрока начала поиска превышает длину строки, следует вернуть пустое представление
     StringView Substr(size_t pos = 0, size_t len = npos) const {
