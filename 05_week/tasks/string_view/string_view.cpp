@@ -37,7 +37,7 @@ private:
     size_t size_;
 
 public:
-   static const size_t npos = static_cast<size_t>(-1);
+   static const size_t npos = std::string_view::npos; 
 
     StringView() : data_(nullptr), size_(0) {}    // Конструктор по умолчанию
 
