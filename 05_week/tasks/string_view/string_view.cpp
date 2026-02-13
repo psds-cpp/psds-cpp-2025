@@ -24,21 +24,6 @@ public:
         end_ = begin_ + len;
     };
 
-    StringView(const std::string&& str, size_t start = 0, size_t len = npos) {
-        if (start > str.size() || str.empty()) {
-            return;
-        }
-        
-        tempStr_ = std::move(str);
-
-        if (len == npos || start + len > tempStr_->size()) {
-            len = tempStr_->size() - start;
-        } 
-
-        begin_ = tempStr_->data() + start;
-        end_ = begin_ + len;
-    };
-
     StringView(const char* str) : begin_(str ? str : nullptr), end_(str ? str + std::strlen(str) : nullptr) {}
 
     StringView(const char* str, size_t len) {
@@ -74,7 +59,6 @@ public:
     std::string ToString() const;
     
 private:
-    std::optional<std::string> tempStr_;
     const char* begin_ = nullptr;
     const char* end_ = nullptr;
 };

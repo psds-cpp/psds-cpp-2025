@@ -7,7 +7,7 @@ struct CowStringData {
     size_t size = 0;
     size_t refCount = 1;
 
-    CowStringData() : data(new char[1]{'\0'}) {}
+    CowStringData() = default;
 
     CowStringData(const char* str) {
         size = strlen(str);
@@ -25,6 +25,7 @@ struct CowStringData {
 
     ~CowStringData() {
         delete[] data;
+        data = nullptr;
     }
 };
 
@@ -139,11 +140,12 @@ bool CowString::Empty() const {
 }
 
 const char* CowString::ToCstr() const {
-    return cowString_->data;
+    return cowString_->data ? cowString_->data : "";
 }
 
 std::string CowString::ToString() const {
-    return std::string(cowString_->data, cowString_->size);
+    return cowString_->data ? std::string(cowString_->data, cowString_->size)
+                            : "";
 }
 
 size_t CowString::Find(char symbol, size_t start = 0) const {
@@ -188,13 +190,19 @@ CowString& CowString::Append(const char* str) {
         MakeDeepCopy();
     }
 
-    size_t newSize = cowString_->size + std::strlen(str);
+    size_t newStrSize = std::strlen(str);
+    size_t newSize = cowString_->size + newStrSize;
     char* newData = new char[newSize + 1];
 
+    size_t offset = 0;
+
+    // memcpy чтобы не проверять на '\0' и избежать ошибки
+    // c strcat, когда data = nullptr
     if (cowString_->data) {
-        std::strcpy(newData, cowString_->data);
+        std::memcpy(newData, cowString_->data, cowString_->size);
+        offset = cowString_->size;
     }
-    std::strcat(newData, str);
+    std::memcpy(newData + offset, str, newStrSize + 1);
 
     delete[] cowString_->data;
     cowString_->data = newData;
@@ -235,7 +243,7 @@ CowString CowString::Substr(size_t start = 0, size_t len = npos) {
         return CowString(*this);
     }
 
-    if (start > cowString_->size) {
+    if (start > cowString_->size || !cowString_->data) {
         return CowString();
     }
 
