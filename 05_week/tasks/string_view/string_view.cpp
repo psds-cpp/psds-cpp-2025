@@ -37,7 +37,7 @@ private:
     size_t size_;
 
 public:
-   static const size_t maxVal = static_cast<size_t>(-1);
+   static const size_t npos = static_cast<size_t>(-1);
 
     StringView() : data_(nullptr), size_(0) {}    // Конструктор по умолчанию
 
@@ -46,7 +46,7 @@ public:
   Конструктор от std::string, позиции начала подстроки (по умолчанию 0) и длину наблюдаемой подстроки (по умолчанию аналог std::string::npos). 
   Длину подстроки следует обрезать, если она превышает длину строки. Если начало превышает длину, то следует создать StringView с параметрами по умолчанию
 */
-  StringView(const std::string& str, size_t pos = 0, size_t len = maxVal) {  // -1 т.к. цитата "Константа объявлена как -1. Это связано с тем, что size_t — тип беззнакового целого числа, и -1 — наибольшее возможное представимое значение для этого типа."
+  StringView(const std::string& str, size_t pos = 0, size_t len = npos) {  // -1 т.к. цитата "Константа объявлена как -1. Это связано с тем, что size_t — тип беззнакового целого числа, и -1 — наибольшее возможное представимое значение для этого типа."
       if(str.size() <= pos)  // проверка, что длина строки больше чем позиция начала.
       {
           data_ = nullptr;
@@ -117,11 +117,11 @@ char Back() const { return data_[size_ -1]; }
     void RemoveSuffix(size_t n) { size_ -= n; }
 
 //   Метод Substr - может принимать позицию начала поиска и количество элементов и возвращает StringView. В случае, когда подстрока начала поиска превышает длину строки, следует вернуть пустое представление
-    StringView Substr(size_t pos = 0, size_t len = maxVal) const {
+    StringView Substr(size_t pos = 0, size_t len = npos) const {
         if (pos >= size_) { return StringView(); }  // В случае, когда подстрока начала поиска превышает длину строки, следует вернуть пустое представление
         
         size_t newSize = size_ - pos;
-        if ((len != maxVal) && (len < newSize)) newSize = count;
+        if ((len != npos) && (len < newSize)) newSize = len;
         
         return StringView(data_ + pos, newSize);
     }
@@ -132,14 +132,15 @@ char Back() const { return data_[size_ -1]; }
         for (size_t i = pos; i < size_; ++i) {
             if (data_[i] == symb) return i;
         }
+     
         
-        return maxVal;  //не совпало
+        return npos;  //не совпало
     }
 // переопределение Find ддля строки
     size_t Find(const StringView& str, size_t pos = 0) const {
-        if ((pos >= size_) || ((pos + str.ize_) >= size_)) return maxVal;
+        if ((pos >= size_) || ((pos + str.size_) >= size_)) return npos;
         
-        if (str.Empty()) return maxVal;    
+        if (str.Empty()) return npos;    
 
         size_t i = pos;    // индекс проверяемой позиции
         size_t j = 0;      // счетчик совпадений
@@ -154,7 +155,7 @@ char Back() const { return data_[size_ -1]; }
           i++;
         }
         
-        return maxVal;
+        return npos;
     }
 
     // Преобразование в std::string
