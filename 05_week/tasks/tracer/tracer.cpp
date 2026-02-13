@@ -64,10 +64,36 @@ public:
       ++alive;
   }
 
-  Tracer(const std::string data): id_(++count), name_ (data +"_" + (std::to_string(count))){
+  Tracer(const std::string data) : id_(++count), name_ (data +"_" + (std::to_string(count))){
       ++default_ctor;
       ++alive;
   }
+
+  Tracer(const Tracer& data) : id_(++count), name_(data.name_) {
+      ++copy_ctor;
+      ++alive;
+  }
+
+  Tracer(Tracer&& other) : id_(++count), name_(std::move(other.name_)){
+        ++move_ctor;
+        ++alive;
+    }
+    
+    Tracer& operator=(const Tracer& data) {  // копирует имя, не изменяет id
+        if (this != &data) {
+            name_ = data.name_;
+            ++copy_assign;
+        }
+        return *this;
+    }
+    
+    Tracer& operator=(Tracer&& data) {    // перемещает имя, не изменяет id
+        if (this != &data) {
+            name_ = std::move(other.name_);
+            ++move_assign;
+        }
+        return *this;
+    }
 
     // Деструктор
     ~Tracer() {
