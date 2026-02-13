@@ -74,7 +74,7 @@ public:
       ++alive;
   }
 
-  Tracer(Tracer&& data) : id_(++count), name_(std::move(data.name_)){
+ Tracer(Tracer&& data) noexcept : id_(++count), name_(std::move(data.name_)){
         ++move_ctor;
         ++alive;
     }
