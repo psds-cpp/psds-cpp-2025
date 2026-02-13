@@ -65,7 +65,7 @@ public:
   }
 
   Tracer(const std::string data) : id_(++count), name_ (data +"_" + (std::to_string(count))){
-      ++default_ctor;
+      ++str_ctor;
       ++alive;
   }
 
