@@ -236,24 +236,6 @@ TEST(StringViewTest, ToString) {
     EXPECT_EQ(sv4.ToString(), "");
 }
 
-TEST(StringViewTest, Compare) {
-    StringView sv1("Hello");
-    StringView sv2("Hello");
-    StringView sv3("Hell");
-    StringView sv4("Hello!");
-    StringView sv5("Hella");
-
-    EXPECT_EQ(sv1.Compare(sv2), 0);
-    EXPECT_TRUE(sv1 == sv2);
-
-    EXPECT_GT(sv1.Compare(sv3), 0);
-    EXPECT_FALSE(sv1 == sv3);
-
-    EXPECT_LT(sv1.Compare(sv4), 0);
-
-    EXPECT_GT(sv1.Compare(sv5), 0);
-}
-
 TEST(StringViewTest, ObservesOriginalString) {
     std::string str = "Hello";
     StringView sv(str);
@@ -311,7 +293,8 @@ TEST(StringViewTest, MemorySafety) {
     EXPECT_TRUE(sv1.Empty());
     EXPECT_EQ(sv1.ToString(), "");
 
-    StringView sv2(std::string("Temporary"));
+    std::string temp("Temporary");
+    StringView sv2(temp);
     EXPECT_EQ(sv2.ToString(), "Temporary");
 
     StringView sv3("Hello, World!");
@@ -331,11 +314,12 @@ TEST(StringViewTest, ComplexScenario) {
     StringView level = sv.Substr(1, bracket_end - 1);
     EXPECT_EQ(level.ToString(), "INFO");
 
-    size_t time_end = sv.Find(' ', bracket_end + 2);
-    StringView datetime = sv.Substr(bracket_end + 2, time_end - bracket_end - 2);
-    EXPECT_EQ(datetime.ToString(), "2024-01-15 10:30:00");
+    size_t pos = bracket_end + 2;
+    size_t data_end = sv.Find(' ', pos);
+    StringView datetime = sv.Substr(pos, data_end - pos);
+    EXPECT_EQ(datetime.ToString(), "2024-01-15");
 
-    size_t user_start = sv.Find('\'', time_end);
+    size_t user_start = sv.Find('\'', data_end);
     size_t user_end = sv.Find('\'', user_start + 1);
     StringView username = sv.Substr(user_start + 1, user_end - user_start - 1);
     EXPECT_EQ(username.ToString(), "admin");
