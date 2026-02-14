@@ -21,8 +21,10 @@ void PrintCheckFlags(CheckFlags flags) {
         std::cout << "[]";
         return;
     }
-    std::cout << "";
-    return;
+    else if (value >= 1 << 6) {
+        std::cout << "";
+        return;
+    }
 
     std::cout << "[";
 
