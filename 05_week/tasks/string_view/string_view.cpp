@@ -1,9 +1,6 @@
 #include <cstring>
 #include <limits>
-#include <optional>
 #include <string>
-#include <utility>
-
 
 class StringView {
 public:
@@ -145,6 +142,10 @@ size_t StringView::Find(char symbol, size_t start = 0) const {
 }
 
 size_t StringView::Find(const StringView& str, size_t start = 0) const {
+    if (str.Empty()) {
+        return 0;
+    }
+
     if (start > Size() || str.Size() > Size() || Empty()) {
         return npos;
     }
