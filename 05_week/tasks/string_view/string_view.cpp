@@ -1,7 +1,6 @@
 #include <cstring>
 #include <string>
 #include <vector>
-#include <iostream>
 #include <stddef.h>
 
 class StringView {
@@ -100,11 +99,11 @@ size_t StringView::Find(char needle, size_t begin) const {
 
 size_t StringView::Find(const char* needle, size_t begin) const {
     if (!needle) { return begin; }
-    size_t m = strlen(needle);
+    size_t m = std::strlen(needle);
     if (m == 0) { return begin; }
     if (m > m_size || begin > m_size - m) { return npos; }
     for (size_t i = begin; i <= m_size - m; ++i) {
-        if (memcmp(m_str_ptr + i, needle, m) == 0) { return i; }
+        if (std::memcmp(m_str_ptr + i, needle, m) == 0) { return i; }
     }
     return npos;
 }
