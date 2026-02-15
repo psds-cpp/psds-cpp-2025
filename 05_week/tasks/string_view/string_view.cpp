@@ -54,10 +54,10 @@ StringView StringView::Substr(size_t begin, size_t len) const {
 
 size_t StringView::Find(StringView strview, size_t pos = 0) const {
     pos = std::min(pos, length_);
-    if (Empty() || strview.Size() > length_ - pos) {
+    if (strview.Size() > length_ - pos) {
         return npos;
     }
-    if (strview.Empty()) {
+    if (strview.Empty() || Empty()) {
         return 0;
     }
 
