@@ -40,14 +40,14 @@ size_t StringView::m_clampLen(size_t begin, size_t len, size_t total) {
 
 StringView::StringView() {}
 
-StringView::StringView(const std::string &str, size_t begin, size_t len) : m_size(m_clampLen(begin, len, str.length())) {
+StringView::StringView(const std::string& str, size_t begin, size_t len) : m_size(m_clampLen(begin, len, str.length())) {
     if (m_size == 0) { return; }
     m_str_ptr = str.data() + begin;
 }
 
-StringView::StringView(const char *str) : m_size(str == nullptr ? 0 : std::strlen(str)), m_str_ptr(str) {}
+StringView::StringView(const char* str) : m_size(str == nullptr ? 0 : std::strlen(str)), m_str_ptr(str) {}
 
-StringView::StringView(const char *str, size_t len) : m_size(len), m_str_ptr(str) {
+StringView::StringView(const char* str, size_t len) : m_size(len), m_str_ptr(str) {
     if (str == nullptr) { m_size = 0; }
     else if (len == npos) { m_size = std::strlen(str); }
 }
@@ -111,7 +111,7 @@ size_t StringView::Find(const char* needle, size_t begin) const {
     return npos;
 }
 
-size_t StringView::Find(const StringView &needle, size_t begin) const {
+size_t StringView::Find(const StringView& needle, size_t begin) const {
     return Find(needle.m_str_ptr, begin);
 }
 
