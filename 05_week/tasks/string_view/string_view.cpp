@@ -121,7 +121,7 @@ public:
 
     size_t Find(const StringView& sv, size_t pos = 0) const {
         if (sv.Empty()) {
-            return (Empty() || pos > size_) ? npos : pos;
+            return (Empty() || pos > size_) ? 0 : pos;
         }
         if (Empty() || pos >= size_ || sv.Size() > size_ - pos) {
             return npos;
