@@ -246,6 +246,23 @@ public:
         }
     }
 
+    size_t Find(const char* str, size_t pos = 0) const {
+        if (str == nullptr) return npos;
 
+        if (*str == '\0') return 0;
+
+        if (pos >= size_) return npos;
+
+        size_t len = std::strlen(str);
+      
+        if (len > size_ - pos) return npos;
+
+        for (size_t i = pos; i <= size_ - len; ++i) {
+            if (std::memcmp(data_ + i, str, len) == 0) {
+                return i;
+            }
+        }
+        return npos;
+    }
 
 };
