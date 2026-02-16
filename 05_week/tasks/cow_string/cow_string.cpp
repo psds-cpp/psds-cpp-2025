@@ -72,13 +72,13 @@ public:
     static const size_t npos = static_cast<size_t>(-1);
     
     // Конструктор по умолчанию — создает пустую строку
-    CowString() createNewCowString(nullptr, 0);
+    CowString() {createNewCowString(nullptr, 0);}
 
     // Конструктор от const char*
-    CowString(const char* data, size_t len)  createNewCowString(data, len);
+    CowString(const char* data, size_t len)  {createNewCowString(data, len);}
 
     // Конструктор от std::string
-    CowString(const std::string& str)  createNewCowString(str.c_str(), str.length());
+    CowString(const std::string& str)  {createNewCowString(str.c_str(), str.length());}
 
     // Конструктор копирования — увеличивает счетчик ссылок, не копирует данные
     CowString(const CowString& obj) : data_(obj.data_), size_(obj.size_), capacity_(obj.capacity_), ref_count_(obj.ref_count_) {
