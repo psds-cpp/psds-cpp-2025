@@ -152,13 +152,13 @@ char Back() const { return data_[size_ -1]; }
     }
 // переопределение Find ддля строки
     size_t Find(const StringView& str, size_t pos = 0) const {
-        if ((pos >= size_) || ((pos + str.size_) >= size_)) return npos;
+
 
         // Проверка пустого указателя
         if (str.Empty()) return (pos <= size_) ? pos : npos;
         
         // Проверка границы и позиции
-        if (pos >= size_ || str.size_ > size_ - pos) return npos;
+        if ((pos >= size_) || ((pos + str.size_) >= size_)) return npos;
 
         size_t i = pos;    // индекс проверяемой позиции
         size_t j = 0;      // счетчик совпадений
