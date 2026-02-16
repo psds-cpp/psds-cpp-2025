@@ -77,7 +77,7 @@ CowString::CowString() : data_(CreateCowStringData(0)) {}
 
 CowString::CowString(const char* str) : data_(CreateCowStringData(str ? strlen(str) : 0)) {
     if (str) {
-        std::strcpy(data_->str_data, str); // std::strcpy автоматически добавляет нуль-терминатор
+        std::strcpy(data_->str_data, str);
     }
 }
 
@@ -201,10 +201,7 @@ CowString& CowString::Append(const char* str) {
     // Копируем старое содержимое
     std::memcpy(new_data->str_data, data_->str_data, data_->str_length);
     // Копируем новое содержимое
-    std::memcpy(new_data->str_data + data_->str_length, str, append_len);
-    // Добавляем нуль-терминатор
-    new_data->str_data[new_len] = '\0';
-    
+    std::memcpy(new_data->str_data + data_->str_length, str, append_len + 1);
     // Освобождаем старый блок
     if (--data_->ref_count == 0) {
         delete[] data_;
