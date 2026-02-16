@@ -70,9 +70,11 @@ private:
 
 public:
     static const size_t npos = static_cast<size_t>(-1);
-    
+
     // Конструктор по умолчанию — создает пустую строку
-    CowString() {createNewCowString(nullptr, 0);}
+    CowString() {
+        createNewCowString(nullptr, 0);
+    }
 
     // Конструктор от const char*
     CowString(const char* data, size_t len)  {createNewCowString(data, len);}
