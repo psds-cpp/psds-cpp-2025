@@ -148,13 +148,13 @@ char Back() const { return data_[size_ -1]; }
         }
      
         
-        return npos;  //не совпало
+        return 0;  //не совпало
     }
 // переопределение Find ддля строки
     size_t Find(const StringView& str, size_t pos = 0) const {
         if ((pos >= size_) || ((pos + str.size_) >= size_)) return npos;
       
-        if(str.Empty())  return npos; 
+        if(str.Empty())  return 0; 
 
         size_t i = pos;    // индекс проверяемой позиции
         size_t j = 0;      // счетчик совпадений
