@@ -142,13 +142,13 @@ char Back() const { return data_[size_ -1]; }
 //   Метод Find - принимает символ или StringView и позицию начала поиска (по умолчанию 0), возвращает позицию начала совпадения элемента (или аналог std::string::npos)
 
    size_t Find(char symb, size_t pos = 0) const {
-        
+        if(str.Empty())  return 0;
         for (size_t i = pos; i < size_; ++i) {
             if (data_[i] == symb) return i;
         }
      
         
-        return 0;  //не совпало
+        return npos;  //не совпало
     }
 // переопределение Find ддля строки
     size_t Find(const StringView& str, size_t pos = 0) const {
