@@ -154,7 +154,10 @@ char Back() const { return data_[size_ -1]; }
     size_t Find(const StringView& str, size_t pos = 0) const {
         if ((pos >= size_) || ((pos + str.size_) >= size_)) return npos;
       
-        if(str.Empty()) return (pos <= size_) ? pos : npos;
+        if(str.Empty()) return{
+          if(pos == 0)  return 0;
+          return npos;
+        }
 
         size_t i = pos;    // индекс проверяемой позиции
         size_t j = 0;      // счетчик совпадений
