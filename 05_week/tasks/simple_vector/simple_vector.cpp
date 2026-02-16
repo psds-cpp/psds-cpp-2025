@@ -97,6 +97,7 @@ SimpleVector& SimpleVector::operator=(const SimpleVector& other) {
 
 SimpleVector& SimpleVector::operator=(SimpleVector&& other) noexcept {
     if (this != &other) {
+        delete[] data_;
         std::tie(data_, size_, capacity_) = std::tie(other.data_, other.size_, other.capacity_);
         std::tie(other.data_, other.size_, other.capacity_) = std::make_tuple(nullptr, 0, 0);
     }
