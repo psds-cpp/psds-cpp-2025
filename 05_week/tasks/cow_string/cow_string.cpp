@@ -176,7 +176,7 @@ public:
 
     // Метод Append - добавляет строку из C-строки или std::string
 
-    CowString& Append(const char* str) {
+  CowString& Append(const char* str) {
         if (str == nullptr || *str == '\0') return *this;
       
         size_t len = std::strlen(str);
@@ -210,6 +210,10 @@ public:
         }
         
         return *this;
+    }
+
+    CowString& Append(const std::string& str) {
+        return Append(str.c_str());
     }
 
     // Метод Substr - принимает позицию и количество символов (по умолчанию от начала до конца строки), возвращает соответствующую подстроку. Если позиция начала превышает длину, то возвращаем пустую строку.
