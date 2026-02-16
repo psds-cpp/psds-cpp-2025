@@ -2,7 +2,7 @@
 #include <string>
 
 struct _String {
-    size_t ref_count = 0;
+    inline static size_t ref_count = 1;
     char* data = nullptr;
     size_t size = 0;
 };
@@ -32,7 +32,7 @@ public:
     char& operator[](size_t idx);
     CowString& Append(const char* cstr);
     CowString& Append(const std::string& str);
-    std::string Substr(size_t pos, size_t count) const;
+    CowString Substr(size_t pos, size_t size);
     void Clear();
 
 private:
@@ -41,11 +41,16 @@ private:
     _String str_;
 };
 
-CowString::CowString() = default;
+CowString::CowString() {
+    str_.data = new char[]{""};
+};
 
 CowString::CowString(const char* cstr) {
-    str_.data = const_cast<char*>(cstr);
-    cstr != nullptr ? str_.size = strlen(cstr) : str_.size = 0;
+    if (cstr != nullptr) {
+        str_.data = new char[strlen(cstr) + 1];
+        str_.size = strlen(cstr);
+        std::memcpy(str_.data, cstr, str_.size + 1);
+    }
 }
 
 CowString::CowString(const std::string& str) :
@@ -53,23 +58,31 @@ CowString::CowString(const std::string& str) :
 
 CowString::CowString(const CowString& other) {
     ++str_.ref_count;
+    str_.size = other.str_.size;
+    str_.data = other.str_.data;
 }
 
 CowString::CowString(CowString&& other) noexcept {
-    str_.ref_count = other.str_.ref_count;
     str_.data = other.str_.data;
     str_.size = other.str_.size; 
-    other.str_.ref_count = 0;
     other.str_.data = nullptr;
     other.str_.size = 0;
 }
 
 CowString::~CowString() {
-    if (str_.ref_count != 0) delete[] str_.data;
+    --str_.ref_count;
+    if (str_.ref_count == 0) {    
+        delete[] str_.data;
+    }
+    str_.data = nullptr;
 }
 
 CowString& CowString::operator=(const CowString& other) {
-    if (this != &other) ++str_.ref_count;
+    if (this != &other) {
+        ++str_.ref_count;
+        str_.data = other.str_.data;
+        str_.size = other.str_.size; 
+    }
     return *this;
 }
 
@@ -88,11 +101,11 @@ size_t CowString::Size() const noexcept {
 }
 
 const char* CowString::ToCstr() const noexcept {
-    return str_.data;
+    return Empty() ? "" : str_.data;
 }
 
 std::string CowString::ToString() const noexcept {
-    return std::string(str_.data);
+    return std::string(ToCstr());
 }
 
 bool CowString::Empty() const noexcept {
@@ -129,24 +142,29 @@ const char& CowString::operator[](size_t idx) const {
 }
 
 CowString::operator const char *() const {
-    return str_.data;
+    return const_cast<const char*>(str_.data);
 }
 
-void CowString::DeepCopy() {
-    char* new_address = new char[str_.size]{};
+void CowString::DeepCopy() noexcept {
+    --str_.ref_count;
+    char* new_address = new char[str_.size + 1]{};
     std::memcpy(new_address, str_.data, str_.size + 1);
     str_.data = new_address;
 }
 
 char& CowString::operator[](size_t idx) {
+    DeepCopy();
     return *(str_.data + idx);
 }
 
 CowString& CowString::Append(const char* cstr) {
-    char* new_address = new char[str_.size + strlen(cstr)]{};
+    if (strlen(cstr) == 0) return *(this);
+    --str_.ref_count;
+    char* new_address = new char[str_.size + strlen(cstr) + 1]{};
     std::memcpy(new_address, str_.data, str_.size);
     std::memcpy(new_address + str_.size, cstr, strlen(cstr) + 1);
     str_.data = new_address;
+    str_.size = str_.size + strlen(cstr);
     return *(this);
 }
 
@@ -154,12 +172,22 @@ CowString& CowString::Append(const std::string& str) {
     return Append(str.c_str());
 }
 
-std::string CowString::Substr(size_t pos = 0, size_t length = -1) const {
-    return std::to_string(pos + length) + "";
+CowString CowString::Substr(size_t pos = 0, size_t size = CowString::npos) {
+    CowString t = *this;
+    t.DeepCopy();
+    if (pos >= t.str_.size) {
+        t.str_.data = nullptr;
+        t.str_.size = 0;
+    }
+    else {
+        t.str_.data += pos;
+        size <= t.str_.size - pos ? t.str_.size = size : t.str_.size -= pos;
+        *(t.str_.data + t.str_.size) = '\0';
+    }
+    return t;
 }
 
 void CowString::Clear() {
-    delete[] str_.data;
-    str_.data = nullptr;
+    DeepCopy();
     str_.size = 0;
 }
