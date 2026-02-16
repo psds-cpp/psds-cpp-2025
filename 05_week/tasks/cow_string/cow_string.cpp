@@ -60,10 +60,10 @@ private:
     if ((data == nullptr) || (len == 0)) capacity_ = 1;
     else capacity_ = len + 1;
     
-    ref_count_ = new int(1);
+    ref_count_ = new size_t(1);
     size_ = len;
     data_ = new char[capacity_];
-    ref_count_ = new size_(capacity_); 
+    ref_count_ = new size_t(capacity_); 
     if ((data == nullptr) || (len == 0)) data_[0] = 0;  // не указано что писать в пустую строку.
     else for(size_t i = 0; i < len; i++) data_[i] = data[i];
 }
@@ -92,9 +92,9 @@ public:
       if (this == &obj) return *this;  // присвоение самому себе.
               
       data_ = obj.data_;
-      size_ = other.size_;
-      capacity_ = other.capacity_;
-      ref_count_ = other.ref_count_;
+      size_ = obj.size_;
+      capacity_ = obj.capacity_;
+      ref_count_ = obj.ref_count_;
       
       if (ref_count_) {
           ++(*ref_count_);
@@ -110,7 +110,7 @@ public:
       obj.size_ = 0;
       obj.capacity_ = 1;
       obj.data_[0] = '\0';
-      obj.ref_count_ = new int(1);
+      obj.ref_count_ = new size_t(1);
     }
 
     // Оператор присваивания перемещением
@@ -152,23 +152,96 @@ public:
 
 
 
-Оператор неявного преобразования к C-строке
-Методы, обеспечивающие модификацию на собственной копии данных:
+//Оператор неявного преобразования к C-строке
+// Оператор неявного преобразования к C-строке
+// Методы, обеспечивающие модификацию на собственной копии данных:
     // Метод Size - возвращает длину строки без учета терминирующего нуля \0
-    size_t Size() const return size_;
+    size_t Size() const {return size_;}
 
     // Метод ToCstr - возвращает указатель на данные
-    const char* ToCstr() const return data_;
+    const char* ToCstr() const {return data_;}
 
     // Метод ToString - возвращает std::string
-    std::string ToString() const return std::string(data_, size_);
+    std::string ToString() const {return std::string(data_, size_);}
 
     // Оператор [] - доступ к символу для чтения
-    const char& operator[](size_t index) const return data_[index];
+    const char& operator[](size_t index) const {return data_[index];}
 
     // Оператор неявного преобразования к C-строке
-    operator const char*() const return data_;
+    operator const char*() const {return data_;}
 
-    // Методы, обеспечивающие модификацию на собственной копии данных:
+// Методы, обеспечивающие модификацию на собственной копии данных:
+    // Оператор [] - доступ к символу для записи
+    char& operator[](size_t index) {return data_[index];}
+
+    // Метод Append - добавляет строку из C-строки или std::string
+
+    CowString& Append(const char* str) {
+        if (str == nullptr || *str == '\0') return *this;
+      
+        size_t len = std::strlen(str);
+        if (len == 0) return *this;
+        
+        size_t new_size = size_ + len;
+      
+        if (new_size + 1 > capacity_) {
+            size_t new_capacity = new_size + 1;
+            char* new_data = new char[new_capacity];
+
+            for(size_t i = 0; i < (new_size - len); i++) new_data[i] = data_[i];
+            for(size_t i = 0; i < len; i++) new_data[(new_size - len) +i] = str[i];
+            
+            // Освобождаем старые данные
+            if (ref_count_ && *ref_count_ == 1) {
+                delete[] data_;
+                delete ref_count_;
+            } else {
+                --(*ref_count_);
+            }
+            
+            data_ = new_data;
+            size_ = new_size;
+            capacity_ = new_capacity;
+            ref_count_ = new size_t(1);
+        } else {
+            std::memcpy(data_ + size_, str, len);
+            size_ = new_size;
+            data_[new_size] = '\0';
+        }
+        
+        return *this;
+    }
+
+    // Метод Substr - принимает позицию и количество символов (по умолчанию от начала до конца строки), возвращает соответствующую подстроку. Если позиция начала превышает длину, то возвращаем пустую строку.
+    CowString Substr(size_t pos = 0, size_t count = npos) const {
+        if (pos >= size_) {
+            return CowString();
+        }
+
+        size_t start = pos;
+        size_t len = (count == npos || count > size_ - pos) ? size_ - pos : count;
+
+        char* data = new char[len + 1];
+      
+        for(size_t i = 0; i < len; i++) data[i] = data_[i] + start;
+        
+        CowString res(data);
+        delete[] data;
+        
+        return res;
+    }
+
+    // Метод Clear - очистка строки
+    void Clear() {
+        if (size_ == 0) return;
+
+        if (ref_count_ && *ref_count_ > 1) createNewCowString(nullptr, 0);
+        else {
+            size_ = 0;
+            data_[0] = '\0';
+        }
+    }
+
+
 
 };
