@@ -65,7 +65,7 @@ private:
     data_ = new char[capacity_];
     ref_count_ = new size_(capacity_); 
     if ((data == nullptr) || (len == 0)) data_[0] = 0;  // не указано что писать в пустую строку.
-    else for(size_t i = 0, i < len, i++) data_[i] = data[i];
+    else for(size_t i = 0; i < len; i++) data_[i] = data[i];
 }
 
 public:
@@ -128,7 +128,7 @@ public:
         obj.data_ = new char[capacity_];
         obj.size_ = capacity_ - 1;
         obj.data_[size_] = '\0';
-        obj.ref_count_ = new size_t i(1);
+        obj.ref_count_ = new size_t(1);
       }
 
     // Деструктор
