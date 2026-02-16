@@ -44,225 +44,241 @@ Cow-семантика применяется в реализации строк
 Проблемы реализации
 В предполагаемой реализации имеется следующая проблема: при использовании модифицирующей версии оператора [] пользователь может сохранить ссылку и модифицировать символ позже, что нарушит cow-семантику. Для упрощения решать её не требуется. В Qt используют QCharRef для решения этой проблемы.
 */
-
 #include <cstring>
-#include <string>
+#include <algorithm>
 
 class CowString {
 private:
-    char* data_;  // указатель на данные
-    size_t size_;  // размер
-    size_t capacity_;  // емкость
-    size_t* ref_count_;  // количество копий.
+    struct StringData {
+        char* data;   // указатель на данные
+        size_t size;  // размер
+        size_t capacity;    // емкость
+        int ref_count;    //  // количество копий. int а не size_t т.к. проще отслеживать переход через 0
 
-  // Универсальный конструктор.
-  void createNewCowString(const char* data, size_t len) {
-    if ((data == nullptr) || (len == 0)) capacity_ = 1;
-    else capacity_ = len + 1;
-    
-    ref_count_ = new size_t(1);
-    size_ = len;
-    data_ = new char[capacity_];
-    ref_count_ = new size_t(capacity_); 
-    if ((data == nullptr) || (len == 0)) data_[0] = 0;  // не указано что писать в пустую строку.
-    else for(size_t i = 0; i < len; i++) data_[i] = data[i];
-}
+        StringData(const char* buf, size_t len) : size(len), capacity(len + 1), ref_count(1) {
+            data = new char[capacity];      // выделение места для данных
+            for(size_t i = 0; i < len; i++) data[i] = buf[i]; // копирование данных
+            data[len] = '\0'; // последний символ
+        }
+
+
+        StringData(size_t cap) : size(0), capacity(cap), ref_count(1) {
+            data = new char[capacity];
+            data[0] = '\0'; // обнуление нулевого он же последний элемент
+        }
+
+        
+        // Диструктор
+        ~StringData() { delete[] data;}
+
+
+        void release_ref() {
+            if (--ref_count == 0) {
+                delete this;
+            }
+        }
+    };
+
+    StringData* str_data;
+
+    void detach() {
+        if (str_data->ref_count > 1) {
+            StringData* new_data = new StringData(str_data->data, str_data->size);
+            str_data->release_ref();
+            str_data = new_data;
+        }
+    }
+
+    void ensure_unique() {
+        if (str_data->ref_count > 1) {
+            StringData* new_data = new StringData(str_data->data, str_data->size);
+            str_data->release_ref();
+            str_data = new_data;
+        }
+    }
 
 public:
-    static const size_t npos = static_cast<size_t>(-1);
+    inline static const size_t npos = -1;
 
     // Конструктор по умолчанию — создает пустую строку
-    CowString() {
-        createNewCowString(nullptr, 0);
-    }
+    CowString() : str_data(new StringData(1)) {}
+
 
     // Конструктор от const char*
-    CowString(const char* data, size_t len)  {createNewCowString(data, len);}
+    CowString(const char* str) {
+        size_t len = 1; // если nullptr то останится 1
+        
+        if (str != nullptr) len = std::strlen(str); // не nullptr значит задаем длину
+
+        str_data = new StringData(str, len);
+    }
+
 
     // Конструктор от std::string
-    CowString(const std::string& str)  {createNewCowString(str.c_str(), str.length());}
+    CowString(const std::string& str) : str_data(new StringData(str.c_str(), str.length())) {}
 
     // Конструктор копирования — увеличивает счетчик ссылок, не копирует данные
-    CowString(const CowString& obj) : data_(obj.data_), size_(obj.size_), capacity_(obj.capacity_), ref_count_(obj.ref_count_) {
-      ++(*ref_count_);
+    CowString(const CowString& other) : str_data(other.str_data) {
+        str_data->ref_count++;  // 
     }
+
 
     // Оператор присваивания копированием — увеличивает счетчик ссылок, не копирует данные
     CowString& operator=(const CowString& obj) {
-      if (this == &obj) return *this;  // присвоение самому себе.
-              
-      data_ = obj.data_;
-      size_ = obj.size_;
-      capacity_ = obj.capacity_;
-      ref_count_ = obj.ref_count_;
-      
-      if (ref_count_) {
-          ++(*ref_count_);
-      }
-
+        if (this != &obj){    // есть, что копирвать.
+          str_data->release_ref() ;
+          str_data = obj.str_data;
+          str_data->ref_count++;
+        }
+        return *this;  
     }
 
 
     // Конструктор перемещения
-    CowString(CowString&& obj) noexcept : data_(obj.data_), size_(obj.size_), capacity_(obj.capacity_), ref_count_(obj.ref_count_) {
-      // новую создали при заполнении полей, сейчас надо "освободить" перемещенную.
-      obj.data_ = new char[1];
-      obj.size_ = 0;
-      obj.capacity_ = 1;
-      obj.data_[0] = '\0';
-      obj.ref_count_ = new size_t(1);
-    }
+    CowString(CowString&& other) noexcept : str_data(other.str_data) { other.str_data = new StringData(1); }  // новую структуру создали при заполнении полей, сейчас надо "освободить" перемещенную.
+
+
 
     // Оператор присваивания перемещением
     CowString& operator=(CowString&& obj) noexcept {
-        if (this == &obj) return *this;
+        if (this != &obj) { // перемещние обьекта, проверяем, что перемещаем не сами себя
+            str_data->release_ref();
+            str_data = obj.str_data;
+            obj.str_data = new StringData(1);
+        }
+        return *this;
+    }
 
-        // копируем
-        data_ = obj.data_;
-        size_ = obj.size_;
-        capacity_ = obj.capacity_;
-        ref_count_ = obj.ref_count_;
-
-        // очистка
-        obj.capacity_ = 1;
-        obj.data_ = new char[capacity_];
-        obj.size_ = capacity_ - 1;
-        obj.data_[size_] = '\0';
-        obj.ref_count_ = new size_t(1);
-      }
 
     // Деструктор
-    ~CowString() {
-      if (ref_count_) {
-            --(*ref_count_);
-            if (*ref_count_ == 0) {
-                delete[] data_;
-                delete ref_count_;
-                data_ = nullptr;
-                size_ = 0;
-                capacity_ = 0;
-                ref_count_ = nullptr;
-            }
-        }
-      }
-
-// Методы НЕ вызывающие копирования:
+    ~CowString() { str_data->release_ref();}
 
 
 
 
-
-//Оператор неявного преобразования к C-строке
+    //Оператор неявного преобразования к C-строке
 // Оператор неявного преобразования к C-строке
 // Методы, обеспечивающие модификацию на собственной копии данных:
     // Метод Size - возвращает длину строки без учета терминирующего нуля \0
-    size_t Size() const {return size_;}
+    size_t Size() const { return str_data->size; }
 
     // Метод ToCstr - возвращает указатель на данные
-    const char* ToCstr() const {return data_;}
+    const char* ToCstr() const { return str_data->data; }
 
     // Метод ToString - возвращает std::string
-    std::string ToString() const {return std::string(data_, size_);}
+    std::string ToString() const { return std::string(str_data->data, str_data->size); }
 
     // Оператор [] - доступ к символу для чтения
-    const char& operator[](size_t index) const {return data_[index];}
+    const char& operator[](size_t i) const {  return str_data->data[i]; }
 
     // Оператор неявного преобразования к C-строке
-    operator const char*() const {return data_;}
+    operator const char*() const { return str_data->data; }
+    
 
 // Методы, обеспечивающие модификацию на собственной копии данных:
     // Оператор [] - доступ к символу для записи
-    char& operator[](size_t index) {return data_[index];}
+    char& operator[](size_t i) {
+        ensure_unique();
+        return str_data->data[i];
+    }
 
-    // Метод Append - добавляет строку из C-строки или std::string
-
-  CowString& Append(const char* str) {
-        if (str == nullptr || *str == '\0') return *this;
-      
-        size_t len = std::strlen(str);
-        if (len == 0) return *this;
+    // Метод Append - добавляет строку из C-строки 
+    CowString& Append(const char* obj) {
+        if (obj == nullptr || *obj == '\0') return *this; // проверка на самого себя
         
-        size_t new_size = size_ + len;
-      
-        if (new_size + 1 > capacity_) {
-            size_t new_capacity = new_size + 1;
-            char* new_data = new char[new_capacity];
+        size_t len = std::strlen(obj);  // длина
+        
+        if (len == 0) return *this; // защита
 
-            for(size_t i = 0; i < (new_size - len); i++) new_data[i] = data_[i];
-            for(size_t i = 0; i < len; i++) new_data[(new_size - len) +i] = str[i];
+        ensure_unique();
+        
+        size_t new_size = str_data->size + len; // расчет новой емкости буфера
+        // возмоно емкостьисходного больше чем требуется для результирующей строки
+        if (new_size + 1 > str_data->capacity) {// добавляем строку
+            size_t new_capacity = new_size + 1; // 
+            StringData* new_data = new StringData(new_capacity);  // выделение памяти под увеличенную строку
+ //           for(size_t i = 0; i < str_data->size; i++)  new_data->data[i] = str_data->data[i];
+ //           for(size_t i = 0; i < len; i++)  new_data->data[new_size - len + i] = obj->data[i];
+            std::memcpy(new_data->data, str_data->data, str_data->size);  // перемещение первойчасти
+            std::memcpy(new_data->data + str_data->size, obj, len);       // перемещение второй части
+            new_data->data[new_size] = '\0';
+            new_data->size = new_size;
             
-            // Освобождаем старые данные
-            if (ref_count_ && *ref_count_ == 1) {
-                delete[] data_;
-                delete ref_count_;
-            } else {
-                --(*ref_count_);
-            }
-            
-            data_ = new_data;
-            size_ = new_size;
-            capacity_ = new_capacity;
-            ref_count_ = new size_t(1);
-        } else {
-            std::memcpy(data_ + size_, str, len);
-            size_ = new_size;
-            data_[new_size] = '\0';
+            str_data->release_ref();
+            str_data = new_data;
+        } 
+        else {
+            std::memcpy(str_data->data + str_data->size, obj, len); // перемещение
+            str_data->size = new_size;
+            str_data->data[new_size] = '\0';
         }
         
         return *this;
     }
 
-    CowString& Append(const std::string& str) {
-        return Append(str.c_str());
-    }
+    // Метод Append для std::string
+    CowString& Append(const std::string& str) { return Append(str.c_str()); }
 
     // Метод Substr - принимает позицию и количество символов (по умолчанию от начала до конца строки), возвращает соответствующую подстроку. Если позиция начала превышает длину, то возвращаем пустую строку.
     CowString Substr(size_t pos = 0, size_t count = npos) const {
-        if (pos >= size_) {
-            return CowString();
-        }
+        if (pos >= str_data->size) return CowString();  // проверкаб что позиция не больше размера 
 
         size_t start = pos;
-        size_t len = (count == npos || count > size_ - pos) ? size_ - pos : count;
+        size_t len = ((count == npos) || (count > str_data->size - pos)) ? str_data->size - pos : count;
 
-        char* data = new char[len + 1];
-      
-        for(size_t i = 0; i < len; i++) data[i] = data_[i] + start;
+        char* buf = new char[len + 1];  // выделение места для данных
+        std::memcpy(buf, str_data->data + start, len); // копирование данных
+        buf[len] = '\0';             // последний символ
         
-        CowString res(data);
-        delete[] data;
+        CowString result(buf);       // формируем даныне
+        delete[] buf;               // освобождение памяти
         
-        return res;
+        return result;
     }
 
-    // Метод Clear - очистка строки
+    // Метод Clear
     void Clear() {
-        if (size_ == 0) return;
+        if (str_data->size == 0) return;  // данных нет
 
-        if (ref_count_ && *ref_count_ > 1) createNewCowString(nullptr, 0);
-        else {
-            size_ = 0;
-            data_[0] = '\0';
+        if (str_data->ref_count > 1) {  // не первая копия. очищаем и удаляем
+            str_data->release_ref();
+            str_data = new StringData(1);
+        } 
+        else {  // первый экземпляр, просто очистка размера и данных
+            str_data->size = 0;
+            str_data->data[0] = '\0';
         }
     }
 
+    // Метод Empty
+    bool Empty() const { return str_data->size == 0; }  // Сокращаем размер до 0
+
+    // Метод Find для символа
+    size_t Find(char symbl, size_t i = 0) const {
+        if (i >= str_data->size)  return npos;    // искомая позиция вне размера данных
+
+        for (size_t j = i; j < str_data->size; ++j) 
+            if (str_data->data[j] == symbl)  return j;  // Символ найден
+        
+
+        return npos;  // ничего не найдено
+    }
+
+    // Метод Find для C-строки
     size_t Find(const char* str, size_t pos = 0) const {
-        if (str == nullptr) return npos;
+        if (str == nullptr) return npos;  // пустой указатель
 
-        if (*str == '\0') return 0;
+        if (*str == '\0')  return 0; // оказались в конце строки
 
-        if (pos >= size_) return npos;
+        if (pos >= str_data->size) return npos;   // начало поиска больше размера
 
         size_t len = std::strlen(str);
-      
-        if (len > size_ - pos) return npos;
+        
+        if (len > str_data->size - pos)   return npos;
 
-        for (size_t i = pos; i <= size_ - len; ++i) {
-            if (std::memcmp(data_ + i, str, len) == 0) {
-                return i;
-            }
+        for (size_t i = pos; i <= str_data->size - len; ++i) {
+            if (std::memcmp(str_data->data + i, str, len) == 0) return i; // послеовательность обнаружен 
         }
         return npos;
     }
-
 };
