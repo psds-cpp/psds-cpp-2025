@@ -28,18 +28,16 @@ public:
     bool Empty() const;
     const int* Data() const;
     void PushBack(int el);
-    void PopBack(); // Hе меняет выделенной памяти
+    void PopBack();
     int* Insert(size_t pos, int el);
     int* Insert(const int* pos_ptr, int el);
-    int* Erase(size_t pos); // const или нет?
+    int* Erase(size_t pos);
     int* Erase(const int* pos_ptr);
-    void Clear(); // Память очищать не нужно, меняем только размер
+    void Clear();
     void Resize(size_t size, int el = 0);
     void Reserve(size_t new_capacity);
-    int* Begin();
-    int* End();
-    const int* Begin() const;
-    const int* End() const;
+    int* Begin() const;
+    int* End() const;
 
 private:
     int* data_;
@@ -55,8 +53,7 @@ void SimpleVector::Realloc(size_t new_capacity) {
     int* new_data = new int[new_capacity];
     std::copy(data_, data_ + size_, new_data);
 
-    delete[] data_;
-    data_ = new_data;
+    delete[] std::exchange(data_, new_data);
     capacity_ = new_capacity;
 }
 
@@ -86,8 +83,7 @@ SimpleVector::~SimpleVector() { delete[] data_; }
 // Операторы
 SimpleVector& SimpleVector::operator=(const SimpleVector& other) {
     if (this != &other) {
-        delete[] data_;
-        data_ = new int[other.size_];
+        delete[] std::exchange(data_, new int[other.size_]);
         std::copy(other.data_, other.data_ + other.size_, data_);
         size_ = other.size_;
         capacity_ = other.size_;
@@ -212,19 +208,11 @@ void SimpleVector::Reserve(size_t new_capacity) {
     Realloc(new_capacity);
 }
 
-int* SimpleVector::Begin() {
+int* SimpleVector::Begin() const {
     return data_;
 }
 
-int* SimpleVector::End() {
-    return data_ + size_;
-}
-
-const int* SimpleVector::Begin() const {
-    return data_;
-}
-
-const int* SimpleVector::End() const {
+int* SimpleVector::End() const {
     return data_ + size_;
 }
 
