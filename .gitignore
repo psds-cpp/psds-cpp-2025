@@ -1,0 +1,83 @@
+# .gitignore для psds-cpp-2025 (C++ проект)
+
+# Каталоги сборки и артефакты
+/build/
+/cmake-build-*/
+/out/
+/bin/
+/obj/
+/dist/
+
+# CMake, Make и тесты
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+CTestTestfile.cmake
+Makefile
+
+# Скомпилированные файлы и библиотеки
+*.o
+*.obj
+*.so
+*.a
+*.lib
+*.dll
+*.exe
+*.out
+*.elf
+*.app
+
+# Отладочные файлы и логи
+*.pdb
+*.ilk
+*.log
+
+# Профилирование / покрытие
+*.gcda
+*.gcno
+coverage.*
+lcov-report/
+
+# Автогенерированные файлы инструментов
+compile_commands.json
+conanbuildinfo.*
+.conan/
+
+# IDE / редакторы
+.vscode/
+.idea/
+*.iml
+*.ipr
+*.iws
+*.sublime-*
+*.code-workspace
+
+# Системные файлы
+.DS_Store
+Thumbs.db
+
+# Временные файлы редакторов
+*~
+*.swp
+*.swo
+*.tmp
+.#*
+
+# Архивы и артефакты релизов
+*.tar.gz
+*.zip
+
+# Документация
+docs/_build/
+doc/html/
+
+# Прочее
+.tags
+.ccls-cache/
+*.lock
+
+# Индексные файлы (.idx)
+*.idx
+*.IDX
+*.idx~
+*.idx.bak
