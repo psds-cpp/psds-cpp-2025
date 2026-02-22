@@ -169,7 +169,7 @@ void WeakPtr::Reset(std::string* ptr = nullptr) {
 
 WeakPtr::WeakPtr():
     ptr_(nullptr),
-    ctrl_ptr_(new control) {}
+    ctrl_ptr_(nullptr) {}
 
 WeakPtr::WeakPtr(std::string* ptr):
     ptr_(ptr),
@@ -196,7 +196,7 @@ WeakPtr& WeakPtr::operator=(const WeakPtr& other) {
         Reset();
         ptr_ = other.ptr_;
         ctrl_ptr_ = other.ctrl_ptr_;
-        ++(ctrl_ptr_->strong);
+        ++(ctrl_ptr_->weak);
     }
     return *this;
 }
@@ -247,7 +247,7 @@ SharedPtr WeakPtr::Lock() const {
     SharedPtr sp;
     sp.ptr_ = Expired() ? nullptr : ptr_;
     sp.ctrl_ptr_ = Expired() ? nullptr : ctrl_ptr_;
-    if(ctrl_ptr_) {
+    if(sp.ctrl_ptr_) {
         ++(ctrl_ptr_->strong);
     }
     return sp;
