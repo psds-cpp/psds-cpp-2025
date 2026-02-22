@@ -1,6 +1,25 @@
-#include <stdexcept>
+#include <iostream>
 
 
-void PrintArray(/* write arguments here */) {
-    throw std::runtime_error{"Not implemented"};
+void PrintArray(const int* begin, const int* end, size_t limit = 0) {
+    if(begin == nullptr || end == nullptr) {
+        std::cout << "[]\n";
+        return;
+    }
+
+    std::cout << "[";
+    int step = begin > end ? -1 : 1;
+    size_t i = 1;
+    for(const int* curent = begin; curent != end; curent += step) {
+        if(limit != 0 && i > limit) {
+            std::cout << "...\n " << *curent << (curent+step == end ? "" : ", ");
+            i = 1;
+        }
+        else {
+            std::cout << *curent << (curent+step == end ? "" : ", ");
+        }
+        ++i;
+    }
+
+    std::cout << "]\n";
 }

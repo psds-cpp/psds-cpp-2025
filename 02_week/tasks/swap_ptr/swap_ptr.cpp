@@ -1,6 +1,8 @@
-#include <stdexcept>
 
-
-void SwapPtr(/* write arguments here */) {
-    throw std::runtime_error{"Not implemented"};
+template<typename T>
+void SwapPtr(T& a, T& b)
+{
+    T temp = a;
+    a = b;
+    b = temp;
 }

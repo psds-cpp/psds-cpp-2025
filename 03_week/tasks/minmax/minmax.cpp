@@ -1,6 +1,20 @@
-#include <stdexcept>
+#include <vector>
+#include <utility>
+#include <limits>
 
-
-/* return_type */ MinMax(/* args */) {
-    throw std::runtime_error{"Not implemented"};
+std::pair<std::vector<int>::const_iterator, std::vector<int>::const_iterator> MinMax(const std::vector<int>& data){
+    auto res = std::make_pair(data.end(), data.end());
+    int Min{std::numeric_limits<int>::max()};
+    int Max{std::numeric_limits<int>::min()};
+    for(auto it = data.begin(); it != data.end(); ++it){
+        if(*it < Min){
+            Min = *it;
+            res.first = it;
+        }
+        if(*it >= Max){
+            Max = *it;
+            res.second = it;
+        }
+    }
+    return res;
 }
