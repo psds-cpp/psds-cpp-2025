@@ -119,7 +119,9 @@ bool SimpleVector::operator!=(const SimpleVector& other) const noexcept {
 
 // Методы
 void SimpleVector::Swap(SimpleVector& other) {
-    std::swap(*this, other);
+    std::swap(data_, other.data_);
+    std::swap(size_, other.size_);
+    std::swap(capacity_, other.capacity_);
 }
 
 size_t SimpleVector::Size() const {

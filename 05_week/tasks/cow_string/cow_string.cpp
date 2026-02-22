@@ -92,10 +92,8 @@ CowString::CowString(CowString&& other) noexcept : data_(other.data_) {
 }
 
 CowString::~CowString() {
-    if (data_) {
-        if (--data_->ref_count == 0) {
-            delete[] data_;
-        }
+    if (--data_->ref_count == 0) {
+        delete[] data_;
     }
 }
 

@@ -51,22 +51,14 @@ UniquePtr::operator bool() const noexcept {
     return ptr_ != nullptr;
 }
 
-std::string& UniquePtr::operator*() const {
-    return *ptr_;
-}
+std::string& UniquePtr::operator*() const { return *ptr_; }
 
-std::string* UniquePtr::operator->() const {
-    return ptr_;
-}
+std::string* UniquePtr::operator->() const { return ptr_; }
 
 // Методы 
-std::string* UniquePtr::Get() {
-    return ptr_;
-}
+std::string* UniquePtr::Get() { return ptr_; }
 
-const std::string* UniquePtr::Get() const {
-    return ptr_;
-}
+const std::string* UniquePtr::Get() const { return ptr_; }
 
 std::string* UniquePtr::Release() {
     return std::exchange(ptr_, nullptr);
