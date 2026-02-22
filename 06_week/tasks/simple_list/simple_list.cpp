@@ -62,6 +62,7 @@ void SimpleList::Unlink(Node* ptr_node) {
     if (head_ == ptr_node && tail_ == ptr_node) {
         head_ = nullptr;
         tail_ = nullptr;
+        delete ptr_node;
     } else if (head_ == ptr_node) {
         delete std::exchange(head_, head_->next);
         head_->prev = nullptr;
