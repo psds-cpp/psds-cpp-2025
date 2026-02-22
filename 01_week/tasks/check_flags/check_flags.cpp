@@ -1,6 +1,7 @@
 #include <cstdint>
-#include <stdexcept>
-
+#include <string>
+#include <utility>
+#include <iostream>
 
 enum class CheckFlags : uint8_t {
     NONE = 0,
@@ -13,6 +14,40 @@ enum class CheckFlags : uint8_t {
     ALL = TIME | DATE | USER | CERT | KEYS | DEST
 };
 
+CheckFlags operator&(CheckFlags lhs, CheckFlags rhs) {
+    return static_cast<CheckFlags>(static_cast<uint8_t>(lhs) & static_cast<uint8_t>(rhs));
+}
+
 void PrintCheckFlags(CheckFlags flags) {
-    throw std::runtime_error{"Not implemented"};
+    // Проверка на выход за диапозон значений CheckFlags
+    if ((~static_cast<uint8_t>(CheckFlags::ALL) & static_cast<uint8_t>(flags)) != 0) {
+        return;
+    }
+
+    const static std::pair<CheckFlags, std::string> checks[] {
+        {CheckFlags::TIME, "TIME"},
+        {CheckFlags::DATE, "DATE"},
+        {CheckFlags::USER, "USER"},
+        {CheckFlags::CERT, "CERT"},
+        {CheckFlags::KEYS, "KEYS"},
+        {CheckFlags::DEST, "DEST"}
+    };
+
+    bool first = true;
+
+    std::cout << "[";
+
+    for (const auto& [flag, name] : checks) {
+        if ((flags & flag) != CheckFlags::NONE) {
+            if (first) {
+                first = false;
+            }
+            else {
+                std::cout << ",";
+            }
+            std::cout << name;
+        }
+    }
+
+    std::cout << ']';
 }

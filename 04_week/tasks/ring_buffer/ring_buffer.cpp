@@ -1,6 +1,219 @@
 #include <vector>
+#include <stddef.h>
+#include <utility>
 
 
 class RingBuffer {
-
+public:
+    RingBuffer(const size_t size);
+    RingBuffer(const size_t size, const int val);
+    RingBuffer(const std::initializer_list<int> ilist);
+    RingBuffer(const RingBuffer& other);
+    void Push(const int item);
+    bool TryPush(const int item);
+    void Pop();
+    bool TryPop(int& pop_value);
+    int& Front();
+    int Front() const;
+    int& Back();
+    int Back() const;
+    bool Empty() const;
+    bool Full() const;
+    size_t Size() const;
+    size_t Capacity() const;
+    void Clear();
+    void Resize(const size_t size);
+    std::vector<int> Vector() const;
+    int& operator[](const size_t idx);
+    int operator[](const size_t idx) const;
+    RingBuffer& operator=(const RingBuffer& other);
+private:
+    size_t m_size = 0;
+    size_t m_begin = 0;
+    size_t m_end = 0;
+    std::vector<int> m_buffer{};
+    size_t m_checkZeroSize(const size_t size) const;
+    void m_popCore();
+    void m_pushBackCore(const int item);
+    void m_copyCore(const RingBuffer& other);
+    int m_last() const;
 };
+
+size_t RingBuffer::m_checkZeroSize(const size_t size) const {
+    return (size == 0) ? 1 : size;
+}
+
+int RingBuffer::m_last() const {
+    return (m_end == 0) ? Capacity() - 1 : m_end - 1;
+}
+
+RingBuffer::RingBuffer(size_t size) {
+    m_buffer.reserve(m_checkZeroSize(size));
+}
+
+RingBuffer::RingBuffer(const size_t size, const int val)
+    : m_size(m_checkZeroSize(size)),
+    m_end(m_size),
+    m_buffer(m_size, val)
+{}
+
+RingBuffer::RingBuffer(const std::initializer_list<int> ilist) : m_buffer(ilist) {
+    if (m_buffer.empty()) {
+        m_buffer.reserve(1);
+    }
+    m_size = m_buffer.size();
+    m_end = m_buffer.size();
+}
+
+void RingBuffer::m_copyCore(const RingBuffer& other) {
+    m_begin = other.m_begin;
+    m_end = other.m_end;
+    m_size = other.m_size;
+    m_buffer = other.m_buffer;
+    m_buffer.reserve(other.Capacity());
+}
+
+RingBuffer::RingBuffer(const RingBuffer& other) {
+    m_copyCore(other);
+}
+
+void RingBuffer::m_pushBackCore(const int item) {
+    if (m_buffer.size() == Capacity()) {
+        m_buffer[m_end] = item;
+        if (m_size != m_buffer.size()) {
+            ++m_size;
+        }
+        else {
+            m_begin = (m_begin + 1) % Capacity(); 
+        }
+    }
+    else {
+        m_buffer.push_back(item);
+        ++m_size;
+    }
+    m_end = (m_end + 1) % Capacity();
+}
+
+void RingBuffer::Push(const int item) {
+    m_pushBackCore(item);
+}
+
+bool RingBuffer::TryPush(const int item) {
+    if (Full()) {
+        return false;
+    }
+
+    m_pushBackCore(item);
+    return true;
+}
+
+void RingBuffer::m_popCore() {
+    m_begin = (m_begin + 1) % Capacity();
+    --m_size;
+}
+
+void RingBuffer::Pop() {
+    if (Size() == 0) {
+        return;
+    }
+
+    m_popCore();
+}
+
+bool RingBuffer::TryPop(int& pop_value) {
+    if (Size() == 0) {
+        return false;
+    }
+    pop_value = m_buffer[m_begin];
+    m_popCore();
+    return true;
+}
+
+int& RingBuffer::Front() {
+    return m_buffer[m_last()];
+}
+
+int RingBuffer::Front() const {
+    return m_buffer[m_last()];
+}
+
+int& RingBuffer::Back() {
+    return m_buffer[m_begin];
+}
+
+int RingBuffer::Back() const {
+    return m_buffer[m_begin];
+}
+
+bool RingBuffer::Empty() const {
+    return Size() == 0;
+}
+
+bool RingBuffer::Full() const {
+    return Capacity() == Size();
+}
+
+size_t RingBuffer::Size() const {
+    return m_size;
+}
+
+size_t RingBuffer::Capacity() const {
+    return m_buffer.capacity();
+}
+
+void RingBuffer::Clear() {
+    m_buffer.clear();
+    m_size = 0;
+}
+
+std::vector<int> RingBuffer::Vector() const {
+    std::vector<int> vector_buffer;
+    vector_buffer.reserve(Size());
+    
+    for (size_t i = 0; i < Size(); ++i) {
+        vector_buffer.push_back(m_buffer[(m_begin + i) % Capacity()]);
+    }
+    
+    return vector_buffer;
+}
+
+void RingBuffer::Resize(const size_t size) {
+    size_t new_size = m_checkZeroSize(size);
+
+    if (new_size == Capacity()) {
+        return;
+    }
+
+    std::vector<int> new_buffer;
+    new_buffer.reserve(new_size);
+
+    for (
+        size_t i = (Size() > new_size) ? Size() - new_size : 0;
+        new_buffer.size() != new_buffer.capacity() && i < Size();
+        ++i
+    ) {
+        new_buffer.push_back(m_buffer[(m_begin + i) % Capacity()]);
+    }
+
+    m_buffer = std::move(new_buffer);
+    m_begin = 0;
+    m_size = m_buffer.size();
+    m_end = Size();
+}
+
+int& RingBuffer::operator[](const size_t idx) {
+    return m_buffer[(m_begin + idx) % Capacity()];
+}
+
+int RingBuffer::operator[](const size_t idx) const {
+    return m_buffer[(m_begin + idx) % Capacity()];
+}
+
+RingBuffer& RingBuffer::operator=(const RingBuffer& other) {
+    if (this == &other) {
+        return *this;
+    }
+
+    m_copyCore(other);
+    return *this;
+}
